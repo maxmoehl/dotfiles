@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+
+archman() {
+    TMP_FILE="$(mktemp)"
+    if curl -sSfLo "${TMP_FILE}" "https://man.archlinux.org/man/${1}.raw"; then
+        man "${TMP_FILE}"
+    else
+        echo "failed to retrieve man page: $(curl -Lf --no-progress-meter "https://man.archlinux.org/man/foobar.raw" 2>&1)"
+        return 1
+    fi
+}
+

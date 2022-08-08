@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+
+# git
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push"
+alias gl="git pull"
+alias gt="git branch -u origin/\$(git rev-parse --abbrev-ref HEAD)"
+alias gco="git checkout"
+alias gsw="git switch"
+alias gplease="git push --force-with-lease"
+alias gsu="git submodule update --init --recursive"
+alias gam="git commit --amend --no-edit"
+alias glast="git log -1"
+alias ggprah="git log --all --decorate --oneline --graph"
+alias gfix="git commit -a --amend --no-edit && git push --force-with-lease"
+
+# ls
+alias l="ls -lh"
+alias ll="ls -lhA"
+alias la="ls -lha"
+
+# python
+alias pip="python3 -m pip"
+alias venv="python3 -m venv"
+alias venvv="python3 -m venv venv && source ./venv/bin/activate"
+alias venv-activate="source ./venv/bin/activate"
+
+# container
+alias k="kubectl"
+alias d="docker"
+alias dc="docker compose"
+
+# managing this configuration
+alias dotfiles="git --git-dir .dotfiles"
+

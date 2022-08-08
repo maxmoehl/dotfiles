@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+export GOMODCACHE="${HOME}/.cache/go-mod"
+export GOBIN="${HOME}/.local/bin"
+

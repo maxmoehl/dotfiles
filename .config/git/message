@@ -1,0 +1,31 @@
+
+
+# BREAKING-CHANGE:
+# Co-authored-by:
+# Resolves:
+
+# A commit message should look something like this:
+#   <type>[(optional scope)]: <description>
+#
+#   [optional body]
+#
+#   [optional footer(s)]
+#
+# Commonly used types:
+#   clean up:    : clean
+#   dependency   : dep
+#   documentation: doc
+#   new feature  : feat
+#   fix a bug    : fix
+#   refactoring  : refactor
+#   code style   : style
+#   testing      : test
+#
+# Example:
+#   fix(haproxy): accept bodies for GET/HEAD/DELETE
+#
+#   Due to a fix in upstream HAProxy, HAProxy no longer accepts
+#   ...
+#
+#   Resolves: #1234
+

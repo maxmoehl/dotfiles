@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+# shell options
+
+# ignore commands with leading space
+setopt HIST_IGNORE_SPACE
+

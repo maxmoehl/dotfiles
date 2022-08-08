@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+# configure and load oh my zsh
+
+ZSH="${HOME}/.local/lib/ohmyzsh"
+ZSH_CUSTOM="${ZDOTDIR}/custom"
+ZSH_THEME="maxmoehl"
+
+ZSH_DISABLE_COMPFIX="true"
+DISABLE_AUTO_UPDATE="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+HIST_STAMPS="yyyy-mm-dd"
+plugins=(git)
+
+if [[ -f "${ZSH}/oh-my-zsh.sh" ]]; then
+    source "${ZSH}/oh-my-zsh.sh"
+else
+    echo "Couldn't find oh my zsh. Did you forget to initialize the submodules?"
+fi
+

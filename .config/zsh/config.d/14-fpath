@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+export FPATH="${HOME}/.config/zsh/custom/completions/:${FPATH}"
+

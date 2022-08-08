@@ -1,0 +1,17 @@
+{
+  "precision": "m",
+  "autoStop": true,
+  "roundStartTime": "5m",
+  "timeclock": {
+    "hoursPerDay": 8,
+    "daysPerWeek": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": false,
+      "sunday": false
+    }
+  }
+}

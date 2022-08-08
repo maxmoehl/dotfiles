@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+archman2() {
+    if test -z "${PAGER}"; then
+	PAGER=less
+    fi
+    curl -sSfL "https://man.archlinux.org/man/${1}.txt" | "${PAGER}"
+}
+

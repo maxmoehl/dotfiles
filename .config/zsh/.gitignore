@@ -1,0 +1,12 @@
+/config.d/4*
+/config.d/5*
+/config.d/6*
+/config.d/7*
+/config.d/8*
+/config.d/9*
+/optional.d/8*
+/optional.d/9*
+/.zsh_history*
+/.zcompdump*
+/.zsh_sessions
+/custom/completions
