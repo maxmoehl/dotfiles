@@ -11,30 +11,38 @@
         packages.default = pkgs.buildEnv {
           name = "default";
           paths = with pkgs; [
-	    bat
-	    borgbackup
-	    btop
-	    cloudfoundry-cli
-	    curl
-	    delta
-	    git
-	    glow
-	    gnused
-	    go
-	    jq
-	    kubectl
-	    kustomize
-	    neovim
-	    openssl
-	    protobuf
-	    scc
-	    sqlite
-	    step-cli
-	    tcpdump
-	    tmux
-	    unixtools.watch
-	    vault
-	    yq-go
+            bat
+            borgbackup
+            btop
+            cloudfoundry-cli
+            curl
+            delta
+            direnv
+            git
+            glow
+            gnupg
+            gnused
+            go
+            graphviz
+            jq
+            kubectl
+            kustomize
+            neovim
+            opensc
+            openssh
+            openssl
+            pass
+            pinentry_mac
+            protobuf
+            scc
+            sqlite
+            sslscan
+            step-cli
+            tcpdump
+            tmux
+            unixtools.watch
+            vault
+            yq-go
           ];
         };
       }
