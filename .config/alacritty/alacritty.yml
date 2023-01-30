@@ -1,3 +1,9 @@
+shell:
+  program: zsh
+
+env:
+  TERM: alacritty
+
 font:
   normal:
     family: Fira Code
