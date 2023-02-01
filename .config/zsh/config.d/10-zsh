@@ -1,7 +1,10 @@
 #!/usr/bin/env zsh
 
-# shell options
+autoload -Uz compinit
+compinit
+bindkey -e
 
 # ignore commands with leading space
 setopt HIST_IGNORE_SPACE
-
+# allow substituions in the prompt
+setopt PROMPT_SUBST

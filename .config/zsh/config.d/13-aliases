@@ -17,6 +17,7 @@ alias ggprah="git log --all --decorate --oneline --graph"
 alias gfix="git commit -a --amend --no-edit && git push --force-with-lease"
 
 # ls
+alias ls="ls --color=auto"
 alias l="ls -lh"
 alias ll="ls -lhA"
 alias la="ls -lha"

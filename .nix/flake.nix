@@ -27,10 +27,12 @@
             jq
             kubectl
             kustomize
+            lua
             neovim
             opensc
             openssh
             openssl
+            pandoc
             pass
             pinentry_mac
             protobuf

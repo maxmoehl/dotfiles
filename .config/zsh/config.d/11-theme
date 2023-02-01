@@ -1,20 +1,24 @@
-# if inside a git repo the following will be done:
-#   get the current working directory and the path of the directory the repo is inside
-#   store the name of the directory the git repo is in
-#   remove the path of the directory the git repo is in from the current wd
-#   concatenate the name of the directory the repo is inside and what is left from the removal
-#   of the full repo path from the current wd
-# 
-#   this will essentially create a relative path to the root directory of the repository
-# else
-#   print the current directory relative to $HOME or the absolute path if outside $HOME
+#!/usr/bin/env zsh
+
+# git info
+autoload -Uz vcs_info
+precmd_vcs_info() {
+  vcs_info
+}
+precmd_functions+=( precmd_vcs_info )
+
+zstyle ':vcs_info:*' enable git
+# TODO: consider switching completely to this for displaying the path inside the repo
+#       `man 1 zshcontrib` contains details on generating more than one output which allows for additional customization
+zstyle ':vcs_info:git:*' formats '%b'
+
 directory() {
   if git rev-parse --is-inside-work-tree &> /dev/null; then
     git_root=$(git rev-parse --show-toplevel)
     current_dir=$(pwd)
     rel_path=(${current_dir#"$git_root"})
     repo_name=(${git_root##*/})
-    
+
     echo "%F{blue}$repo_name$rel_path%f"
   else
     echo "%F{blue}%0~%f"
@@ -64,16 +68,10 @@ prompt_git() {
 }
 
 prompt_git_no_status() {
-  echo "%F{yellow}$(git_prompt_info)%f"
+  if [[ -n "${vcs_info_msg_0_}" ]]; then
+    echo " %F{yellow}${vcs_info_msg_0_}%f"
+  fi
 }
-
-ZSH_THEME_GIT_PROMPT_ADDED=" %F{yellow}✈%f"
-ZSH_THEME_GIT_PROMPT_MODIFIED=" %F{yellow}✱%f"
-ZSH_THEME_GIT_PROMPT_AHEAD=" %F{green}↑%f"
-ZSH_THEME_GIT_PROMPT_BEHIND=" %F{red}↓%f"
-ZSH_THEME_GIT_PROMPT_DIRTY=""
-ZSH_THEME_GIT_PROMPT_PREFIX=" "
-ZSH_THEME_GIT_PROMPT_SUFFIX=""
 
 # put it all together, only the prompt symbol and a space on the left
 PROMPT='$(prompt_prefix)$(prompt_symbol) '
@@ -83,4 +81,3 @@ PROMPT='$(prompt_prefix)$(prompt_symbol) '
 # to re-enable this the two git config options als need to be unset
 # RPROMPT='$(directory)$(prompt_git)$(return_status)'
 RPROMPT='$(directory)$(prompt_git_no_status)$(return_status)'
-
