@@ -1,0 +1,6 @@
+#!/usr/bin/sh
+
+COMMIT_MSG_FILE="${1}"
+
+git status | sed 's/^/# &/' >> "${COMMIT_MSG_FILE}"
+
