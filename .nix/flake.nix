@@ -25,8 +25,6 @@
             go
             graphviz
             jq
-            kubectl
-            kustomize
             lua
             neovim
             opensc
@@ -39,7 +37,6 @@
             scc
             sqlite
             sslscan
-            step-cli
             tcpdump
             tmux
             unixtools.watch
