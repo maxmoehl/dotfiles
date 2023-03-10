@@ -4,7 +4,12 @@ autoload -Uz compinit
 compinit
 bindkey -e
 
-# ignore commands with leading space
+# man 1 zshoptions
+setopt CORRECT
+setopt EXTENDED_HISTORY
+setopt HASH_LIST_ALL
+setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-# allow substituions in the prompt
+setopt HIST_NO_STORE
 setopt PROMPT_SUBST
+setopt SHARE_HISTORY
