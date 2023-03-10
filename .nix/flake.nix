@@ -33,6 +33,8 @@
             pass
             pinentry_mac
             protobuf
+            rustc
+            cargo
             scc
             sqlite
             sslscan
