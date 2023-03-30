@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+NIX_HASH="9ef6e7727f4c31507627815d4f8679c5841efb00"
+export NIX_HASH
+
+function nsh() {
+	nix shell "nixpkgs/${NIX_HASH}#${1?Please provide the package name as first argument}"
+}
+
+function command_not_found_handler() {
+	package_name="${1}"
+	if nix eval --raw "nixpkgs/${NIX_HASH}#${package_name}" &> /dev/null; then
+		nix shell "nixpkgs/${NIX_HASH}#${package_name}" -c "${@}"
+	else
+		echo "${package_name}: command not found, not even in nix"
+	fi
+}
+

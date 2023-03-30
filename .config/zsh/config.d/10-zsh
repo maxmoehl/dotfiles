@@ -5,7 +5,6 @@ compinit
 bindkey -e
 
 # man 1 zshoptions
-setopt CORRECT
 setopt EXTENDED_HISTORY
 setopt HASH_LIST_ALL
 setopt HIST_IGNORE_DUPS

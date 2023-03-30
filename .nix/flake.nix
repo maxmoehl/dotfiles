@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
@@ -10,6 +10,7 @@
         packages.default = pkgs.buildEnv {
           name = "default";
           paths = with pkgs; [
+            alacritty
             bat
             borgbackup
             btop
@@ -43,6 +44,7 @@
             unixtools.watch
             vault
             yq-go
+            yubikey-manager
           ];
         };
       });

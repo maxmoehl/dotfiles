@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+
+# repeat
+# after
+# me
+
+function ram() {
+	while true; do
+		bash -c "$*"
+	done
+}
+
