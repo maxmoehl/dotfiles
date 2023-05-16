@@ -2,20 +2,23 @@
 
 # git
 alias g="git"
-alias gs="git status"
 alias ga="git add"
 alias gc="git commit"
-alias gp="git push"
+alias gd="git diff"
 alias gl="git pull"
-alias gt="git branch -u origin/\$(git rev-parse --abbrev-ref HEAD)"
+alias gp="git push"
+alias gr="git rebase"
+alias gs="git status"
+alias gt="git branch -u origin/\$(git rev-parse --abbrev-ref HEAD)" # set the local branch to track the remote branch on origin with the same name
+alias gam="git commit --amend --no-edit"                            # amend a change to the last commit without changing the commit message
 alias gco="git checkout"
+alias grb="git rebase -i \"\$(git merge-base origin/HEAD HEAD)\""   # start an interactive rebase for all commits of the feature branch
+alias gsu="git submodule update --init --recursive"                 # update all sub-modules
 alias gsw="git switch"
-alias gplease="git push --force-with-lease"
-alias gsu="git submodule update --init --recursive"
-alias gam="git commit --amend --no-edit"
+alias ggprah="git log --all --decorate --oneline --graph"           # show a nice history
 alias glast="git log -1"
-alias ggprah="git log --all --decorate --oneline --graph"
-alias gfix="git commit -a --amend --no-edit && git push --force-with-lease"
+alias glog="git log"
+alias gplease="git push --force-with-lease"
 
 # ls
 alias ls="ls --color=auto"
@@ -33,6 +36,9 @@ alias venv-activate="source ./venv/bin/activate"
 alias k="kubectl"
 alias d="docker"
 alias dc="docker compose"
+
+# other
+alias scp="scp -o 'RemoteCommand=none'"
 
 # managing this configuration
 alias dotfiles="git -C '${HOME}' --git-dir .dotfiles"

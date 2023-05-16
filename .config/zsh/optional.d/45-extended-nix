@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 
-NIX_HASH="9ef6e7727f4c31507627815d4f8679c5841efb00"
-export NIX_HASH
+export NIX_HASH="4bb072f0a8b267613c127684e099a70e1f6ff106"
 
 function nsh() {
 	nix shell "nixpkgs/${NIX_HASH}#${1?Please provide the package name as first argument}"
