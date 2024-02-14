@@ -1,0 +1,15 @@
+theme = "onelight"
+
+[editor]
+scrolloff = 10
+true-color = true
+rulers = [100]
+bufferline = "multiple"
+text-width = 100
+
+[editor.whitespace]
+render = "all"
+
+[editor.indent-guides]
+render = true
+skip-levels = 0
