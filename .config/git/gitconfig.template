@@ -3,6 +3,3 @@
   email = mail@domain.tld
 [include]
   path = ~/.config/git/main.conf
-[include]
-  path = ~/.config/git/gpg.conf
-
