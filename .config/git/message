@@ -1,16 +1,12 @@
 
 
-# BREAKING-CHANGE:
-# Co-authored-by:
-# Resolves:
-# See:
-
 # Template:
-#   <type>[(optional scope)]: <description>
+#   type[(scope)][!]: summary
 #
-#   [optional body]
+#   [description]
 #
-#   [optional footer(s)]
+#   [trailer(s)]
 #
-# Types: chore, clean, dep, doc, feat, fix, refactor, style, test
+# Types: fix, feat, dep, ci, refactor, doc, test
+# Trailers: BREAKING-CHANGE, Co-authored-by, Resolves, See
 #
