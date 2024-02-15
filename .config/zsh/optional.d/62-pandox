@@ -3,7 +3,7 @@
 pandox() {
     RESULT="$(pbpaste | pandoc -f "${1:?from required}" -t "${2:?to required}")";
     if [[ -n "${RESULT}" ]]; then
-        pbcopy <<<"${RESULT}";
+        pbcopy <<< "${RESULT}";
     fi
 }
 

@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+CACHE_FILE="${HOME}/.cache/brew-upgrade-notification"
+
+alias brew-upgrade="brew upgrade --greedy && rm -f '${CACHE_FILE}'"
+
+if [[ ! -d "$(dirname "${CACHE_FILE}")" ]]; then
+	mkdir -p "${CACHE_FILE}"
+fi
+
+if [[ -f "${CACHE_FILE}" ]]; then
+	CACHE_FILE_AGE="$(date -r "${CACHE_FILE}" +%s)"
+else
+	CACHE_FILE_AGE="0"
+fi
+
+CURRENT_TIME="$(date +%s)"
+
+if (( CACHE_FILE_AGE < ( CURRENT_TIME - ( 24 * 60 * 60 ) ) )); then
+	# cache is outdated, update it
+	(brew outdated --quiet --greedy > "${CACHE_FILE}" &) &> /dev/null
+fi
+
+OUTDATED_KEGS="$(cat "${CACHE_FILE}")"
+if [[ -n "${OUTDATED_KEGS}" ]]; then
+	echo "Outdated Kegs:"
+	echo "${OUTDATED_KEGS}"
+	echo
+	echo "Consider upgrading using 'brew-upgrade'"
+fi
