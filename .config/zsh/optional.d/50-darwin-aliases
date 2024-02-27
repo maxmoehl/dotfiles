@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-alias idea="open -na \"IntelliJ IDEA.app\" --args"
-alias typora="open -a typora"
-

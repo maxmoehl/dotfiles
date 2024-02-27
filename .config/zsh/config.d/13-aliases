@@ -37,6 +37,23 @@ alias k="kubectl"
 alias d="docker"
 alias dc="docker compose"
 
+# iTerm
+if [[ "${TERM_PROGRAM}" = "iTerm.app" ]]; then
+  alias it2dl="bash <(curl -s https://iterm2.com/utilities/it2dl)"
+  alias it2ul="bash <(curl -s https://iterm2.com/utilities/it2ul)"
+fi
+
+# Linux
+if [[ "${OSTYPE}" =~ "linux" ]]; then
+  alias ip="ip -c=auto"
+fi
+
+# Darwin
+if [[ "${OSTYPE}" =~ "darwin" ]]; then
+  alias idea="open -na 'IntelliJ IDEA.app' --args"
+  alias typora="open -a typora"
+fi
+
 # other
 alias scp="scp -o 'RemoteCommand=none'"
 

@@ -1,4 +1,0 @@
-#!/usr/bin/env zsh
-
-alias ip="ip -c=auto"
-
