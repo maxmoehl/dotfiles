@@ -1,0 +1,78 @@
+live_config_reload = true
+
+[colors.bright]
+black = "#7a8181"
+blue = "#5ca7e4"
+cyan = "#00c990"
+green = "#49d0c5"
+magenta = "#697098"
+red = "#f76e6e"
+white = "#989fb1"
+yellow = "#dac26b"
+
+[colors.cursor]
+cursor = "#403f53"
+text = "#fbfbfb"
+
+[colors.normal]
+black = "#011627"
+blue = "#4876d6"
+cyan = "#08916a"
+green = "#2aa298"
+magenta = "#403f53"
+red = "#d3423e"
+white = "#7a8181"
+yellow = "#daaa01"
+
+[colors.primary]
+background = "#ffffff"
+foreground = "#403f53"
+
+[colors.selection]
+background = "#f2f2f2"
+text = "#403f53"
+
+[cursor.style]
+blinking = "Off"
+shape = "Block"
+
+[env]
+TERM = "alacritty"
+
+[font]
+size = 12.0
+
+[font.bold]
+family = "Fira Code"
+
+[font.bold_italic]
+family = "Fira Code"
+
+[font.italic]
+family = "Fira Code"
+
+[font.normal]
+family = "Fira Code"
+
+[[hints.enabled]]
+# Generic URLs
+command = "open"
+hyperlinks = true
+post_processing = true
+persist = false
+mouse.enabled = true
+binding = { key = "U", mods = "Control|Shift" }
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[[hints.enabled]]
+# Jira items
+regex = '[a-zA-Z]{3,6}-\d+'
+command = { program = "/Users/D074009/.local/bin/alacritty-helper.sh", args = [ "jira" ] }
+mouse.enabled = true
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[shell]
+program = "/opt/homebrew/bin/tmux"
