@@ -1,0 +1,22 @@
+[[language]]
+name = "markdown"
+language-servers = [ "marksman", "ltex-ls"]
+
+[[language]]
+name = "python"
+auto-format = true
+
+[[language]]
+name = "text"
+scope = "text.txt"
+roots = []
+language-servers = [ "ltex-ls" ]
+file-types = [ "txt" ]
+auto-format = false
+text-width = 100
+
+[language-server.ltex-ls.config.ltex.disabledRules]
+"en-US" = [ "PROFANITY", "ARROWS", "WHITESPACE_RULE" ]
+
+[language-server.ltex-ls.config.ltex.dictionary]
+"en-US" = [ "gorouter", "ltex-ls", "Alacritty", "CCEE", "VXLAN" ]

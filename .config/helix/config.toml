@@ -1,12 +1,13 @@
-theme = "onelight"
+theme = "github_light"
 
 [editor]
+auto-format = true
 bufferline = "multiple"
 mouse = false
 rulers = [100]
+scroll-lines = 0
 scrolloff = 10
 text-width = 100
-true-color = true
 
 [editor.whitespace]
 render = "all"
