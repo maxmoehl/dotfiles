@@ -2,4 +2,4 @@
   name = Your Name
   email = mail@domain.tld
 [include]
-  path = ~/.config/git/main.conf
+  path = ~/.config/git/config

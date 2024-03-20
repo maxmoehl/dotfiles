@@ -20,6 +20,7 @@
   status = true
   template = ~/.config/git/message
 [core]
+  attributesFile = ~/.config/git/attributes
   autocrlf = input
   excludesFile = ~/.config/git/ignore
   hooksPath = ~/.config/git/hooks
@@ -29,11 +30,15 @@
 [delta]
   light = true
   line-numbers = true
+  max-line-length = 0
   navigate = true
   syntax-theme = GitHub
 [diff]
   algorithm = histogram
   colorMoved = false
+[diff "pem"]
+  binary = true
+  textconv = "openssl x509 -noout -text -in"
 [fetch]
   negotiationAlgorithm = skipping
   output = compact
@@ -44,6 +49,8 @@
   format = ssh
 [help]
   autoCorrect = prompt
+[http]
+  cookieFile = ~/.config/git/cookies
 [init]
   defaultBranch = main
 [interactive]
@@ -64,6 +71,8 @@
 [rerere]
   enabled = true
   autoUpdate = true
+[stash]
+  showPatch = true
 [status]
   aheadBehind = true
   branch = true
