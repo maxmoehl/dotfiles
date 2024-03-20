@@ -1,81 +1,81 @@
 [alias]
-  a = add
-  c = commit
-  l = pull
-  p = push
-  s = status
-  cl = clone --filter=blob:limit=100k
-  sm = submodule
-  graph = log --all --decorate --oneline --graph
-  last = log -1
-  please = push --force-with-lease
+	a = add
+	c = commit
+	l = pull
+	p = push
+	s = status
+	cl = clone --filter=blob:limit=100k
+	sm = submodule
+	graph = log --all --decorate --oneline --graph
+	last = log -1
+	please = push --force-with-lease
 [blame]
-  date = iso
+	date = iso
 [branch]
-  sort = -committerdate
+	sort = -committerdate
 [column]
-  ui = auto
+	ui = auto
 [commit]
-  gpgSign = true
-  status = true
-  template = ~/.config/git/message
+	gpgSign = true
+	status = true
+	template = ~/.config/git/message
 [core]
-  attributesFile = ~/.config/git/attributes
-  autocrlf = input
-  excludesFile = ~/.config/git/ignore
-  hooksPath = ~/.config/git/hooks
-  pager = delta
+	attributesFile = ~/.config/git/attributes
+	autocrlf = input
+	excludesFile = ~/.config/git/ignore
+	hooksPath = ~/.config/git/hooks
+	pager = delta
 [credential]
-  helper = cache
+	helper = cache
 [delta]
-  light = true
-  line-numbers = true
-  max-line-length = 0
-  navigate = true
-  syntax-theme = GitHub
+	light = true
+	line-numbers = true
+	max-line-length = 0
+	navigate = true
+	syntax-theme = GitHub
 [diff]
-  algorithm = histogram
-  colorMoved = false
+	algorithm = histogram
+	colorMoved = false
 [diff "pem"]
-  binary = true
-  textconv = "openssl x509 -noout -text -in"
+	binary = true
+	textconv = "openssl x509 -noout -text -in"
 [fetch]
-  negotiationAlgorithm = skipping
-  output = compact
-  prune = true
-  pruneTags = true
-  recurseSubmodules = on-demand
+	negotiationAlgorithm = skipping
+	output = compact
+	prune = true
+	pruneTags = true
+	recurseSubmodules = on-demand
 [gpg]
-  format = ssh
+	format = ssh
 [help]
-  autoCorrect = prompt
+	autoCorrect = prompt
 [http]
-  cookieFile = ~/.config/git/cookies
+	cookieFile = ~/.config/git/cookies
 [init]
-  defaultBranch = main
+	defaultBranch = main
 [interactive]
-  diffFilter = delta --color-only
+	diffFilter = delta --color-only
 [log]
-  date = iso
+	date = iso
 [merge]
-  conflictstyle = zdiff3
+	conflictstyle = zdiff3
 [pull]
-  ff = only
+	ff = only
 [push]
-  autoSetupRemote = true
-  default = current
-  recurseSubmodules = check
+	autoSetupRemote = true
+	default = current
+	recurseSubmodules = check
 [rebase]
-  abbreviateCommands = true
-  autoStash = true
+	abbreviateCommands = true
+	autoStash = true
 [rerere]
-  enabled = true
-  autoUpdate = true
+	enabled = true
+	autoUpdate = true
 [stash]
-  showPatch = true
+	showPatch = true
 [status]
-  aheadBehind = true
-  branch = true
-  short = true
+	aheadBehind = true
+	branch = true
+	short = true
 [user]
-  signingkey = ~/.ssh/id_ed25519.pub
+	signingkey = ~/.ssh/id_ed25519.pub
