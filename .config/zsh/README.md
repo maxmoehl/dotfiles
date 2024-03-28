@@ -14,8 +14,8 @@ The symlinks are ignored via `.gitignore` as long as they follow this pattern:
 - `00` - `09`: Reserved
 - `10` - `39`: Fixed configuration
 - `40` - `79`: Optional configuration
-  - `4X`: programs
-  - `5X`: OS specific fixes and tweaks
-  - `6X`: scripts
-  - `7X`: programming languages
+  - `4X`: Programs
+  - `5X`: Reserved
+  - `6X`: Scripts
+  - `7X`: Programming languages
 - `80` - `99`: Local configuration (not checked in)

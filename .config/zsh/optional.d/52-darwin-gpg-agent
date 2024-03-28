@@ -1,6 +1,0 @@
-#!/usr/bin/env zsh
-
-SSH_AUTH_SOCK=/Users/$USER/.gnupg/S.gpg-agent.ssh
-launchctl setenv SSH_AUTH_SOCK ${HOME}/.gnupg/S.gpg-agent.ssh
-export SSH_AUTH_SOCK
-export GPG_TTY=$(tty)
