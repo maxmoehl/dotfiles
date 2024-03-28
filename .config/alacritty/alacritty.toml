@@ -58,3 +58,6 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 [shell]
 program = "/opt/homebrew/bin/tmux"
 args = [ "new-session", "-A", "-s", "main" ]
+
+[window]
+dynamic_padding = true
