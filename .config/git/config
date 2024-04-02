@@ -38,7 +38,10 @@
 	colorMoved = false
 [diff "pem"]
 	binary = true
-	textconv = "openssl x509 -noout -text -in"
+	textconv = openssl x509 -noout -text -in
+[diff "sqlite3"]
+	binary = true
+	textconv = echo .dump | sqlite3
 [fetch]
 	negotiationAlgorithm = skipping
 	output = compact

@@ -1,1 +1,4 @@
 *.pem diff=pem
+*.db diff=sqlite3
+*.sqlite diff=sqlite3
+*.sqlite3 diff=sqlite3
