@@ -42,6 +42,7 @@
 [fetch]
 	negotiationAlgorithm = skipping
 	output = compact
+	parallel = 16
 	prune = true
 	pruneTags = true
 	recurseSubmodules = on-demand
