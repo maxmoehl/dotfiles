@@ -22,7 +22,7 @@ alias glog="git log"
 alias gplease="git push --force-with-lease"
 
 # ls
-alias ls="ls --color=auto"
+alias ls="ls --color=auto --time-style=+'%Y-%m-%d %H:%M'"
 alias l="ls -lh"
 alias ll="ls -lhA"
 alias la="ls -lha"
@@ -57,6 +57,7 @@ fi
 
 # other
 alias scp="scp -o 'RemoteCommand=none'"
+function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
 
 # managing this configuration
 alias dotfiles="git -C '${HOME}' --git-dir .dotfiles"

@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+eval "$(dircolors ~/.config/dircolors)"
+
 # git info
 autoload -Uz vcs_info
 precmd_vcs_info() {

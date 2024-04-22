@@ -2,6 +2,10 @@
 
 autoload -Uz compinit
 compinit
+
+# lower-case matches upper-case as well
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
 bindkey -e
 
 # man 1 zshoptions
