@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+
+autoload -Uz compinit edit-command-line
+
+compinit
+
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' menu select
+zstyle ':completion:*' verbose yes
+
+bindkey -e
+
+zle -N edit-command-line
+bindkey '^V' edit-command-line
+
+# man 1 zshoptions
+setopt \
+  AUTO_CD \
+  CD_SILENT \
+  EXTENDED_HISTORY \
+  HIST_IGNORE_DUPS \
+  HIST_IGNORE_SPACE \
+  HIST_NO_STORE \
+  PROMPT_SUBST \
+  SHARE_HISTORY \
+
+# man 1 zshparam
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
+HISTSIZE=2000
+SAVEHIST=2000
