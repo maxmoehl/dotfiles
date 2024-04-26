@@ -1,3 +1,6 @@
+[advice]
+	detachedHead = false
+	statusHints = false
 [alias]
 	a = add
 	c = commit
