@@ -60,5 +60,5 @@ alias scp="scp -o 'RemoteCommand=none'"
 function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
 
 # managing this configuration
-alias dotfiles="git -C '${HOME}' --git-dir .dotfiles"
-
+alias dotfiles="git -C '${HOME}' --git-dir '.local/share/dotfiles'"
+alias dotf=dotfiles
