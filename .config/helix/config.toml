@@ -8,6 +8,7 @@ rulers       = [ 100 ]
 scroll-lines = 0
 scrolloff    = 10
 text-width   = 100
+true-color   = true
 
 [editor.indent-guides]
 character   = "▏"
