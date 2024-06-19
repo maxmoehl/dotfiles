@@ -1,0 +1,112 @@
+#!/bin/sh -e
+
+# #=======#
+# # sship #
+# #=======#
+#
+# A script to automatically upload files to the home directory on a remote machine before opening
+# the interactive SSH session.
+#
+# This tool was created because its author frequently has to log in to jump hosts to access certain
+# systems. Those jump hosts do not have a persistent home partition and lack even the most common
+# aliases.
+#
+# # Installation #
+#
+# Copy the script to a directory which is in your $PATH.
+#
+# # Configuration #
+#
+# Some very basic configuration is available via environment variables:
+#
+#   SSHIP_HOME  : Directory to upload.
+#   SSHIP_DEBUG : Enabled debug output.
+#   SSHIP_SILENT: Disable all log out (takes precedence over SSHIP_DEBUG).
+#
+# The files to be uploaded are taken from ~/.local/share/sship. The directory is uploaded as-is to
+# the home directory of the user on the remote system.
+#
+# It is recommended to configure the Control* parameters of your OpenSSH client to prevent frequent
+# prompts for authentication / passphrases. Copy-paste if you're lazy:
+#
+#   ServerAliveInterval 60
+#   ControlMaster auto
+#   ControlPath ~/.ssh/master-%r@%h:%p
+#   ControlPersist yes
+#
+# # Usage #
+#
+#   sship DESTINATION
+#
+# The script does not allow any custom SSH options on the command line, the user is expected to
+# provide those via ssh_config(5). Consequently it is not possible to execute one-of commands using
+# this script, only interactive shell sessions are supported.
+#
+# # Troubleshooting #
+#
+# 1. sship is not uploading my new files!
+#
+# If you previously uploaded your files, sship will create a .sship_uploaded file. As long as that
+# file exists it won't upload again. If still want to upload make sure to first delete that file.
+
+if [ -z "${SSHIP_HOME}" ]; then
+  SSHIP_HOME="${HOME}/.local/share/sship"
+fi
+TMP_DIR=""
+DESTINATION="${1}"
+
+__log() {
+	if [ -n "${SSHIP_SILENT}" ]; then
+		return
+	fi
+	_log_lvl="${1:-INFO }"
+	if [ -z "${SSHIP_DEBUG}" ] && [ "${_log_lvl}" = "DEBUG" ]; then
+		return
+	fi
+
+	shift
+	echo "[$(date -Iseconds)][sship][${_log_lvl}] ${*}"
+}
+
+alias debug='__log "DEBUG"'
+alias info='__log "INFO "'
+alias error='__log "ERROR"'
+
+clean_tmp() {
+	debug "cleaning up tmp dir"
+	test -d "${TMP_DIR}" && rm -rf "${TMP_DIR}"
+}
+
+fail() {
+	error "${@}"
+	clean_tmp
+	exit 1
+}
+
+info "#=======#"
+info "# sship #"
+info "#=======#"
+
+debug "invoked as '${0} ${*}'"
+
+debug "checking destination: '${DESTINATION}'"
+test -n "${DESTINATION}" || fail "no destination provided"
+
+debug "checking SSHIP_HOME: '${SSHIP_HOME}'"
+test -d "${SSHIP_HOME}" || fail "SSHIP_HOME (${SSHIP_HOME}) does not exist"
+
+debug "setting up temporary directory"
+TMP_DIR="$(mktemp -d)"
+debug "temporary directory at '${TMP_DIR}'"
+
+info "establishing session, you might be prompted to authenticate"
+ssh -o RemoteCommand=none "${@}" true > /dev/null 2> "${TMP_DIR}/ssh01.err" || \
+	fail "failed to connect: $(cat "${TMP_DIR}/ssh01.err")"
+
+info "uploading files..."
+rsync -a --copy-links -e 'ssh -o RemoteCommand=none' "${SSHIP_HOME}/./" "${DESTINATION}:" > /dev/null 2> /"${TMP_DIR}/rsync01.err" ||
+  fail "failed to upload files: $(cat "${TMP_DIR}/rsync01.err")"
+
+clean_tmp
+info "dropping you into SSH..."
+exec ssh "${@}"
