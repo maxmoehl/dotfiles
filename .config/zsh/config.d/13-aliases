@@ -17,7 +17,7 @@ alias gst="git stash"
 alias gsu="git submodule update --recursive"
 alias gsw="git switch"
 alias ggprah="git log --all --decorate --oneline --graph"
-alias glast="git log -1"
+alias glast="git log --reverse --oneline --decorate=no \"\$(git merge-base origin/HEAD HEAD)\"..HEAD"
 alias glog="git log"
 alias gplease="git push --force-with-lease"
 
@@ -56,6 +56,7 @@ if [[ "${OSTYPE}" =~ "darwin" ]]; then
 fi
 
 # other
+alias cdr='cd $(git rev-parse --show-toplevel)'
 alias scp="scp -o 'RemoteCommand=none'"
 function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
 
