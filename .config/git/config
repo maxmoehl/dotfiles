@@ -3,15 +3,19 @@
 	statusHints = false
 [alias]
 	a = add
+	b = blame -w -C
 	c = commit
 	l = pull
 	p = push
 	s = status
 	cl = clone --filter=blob:limit=100k
+	cp = cherry-pick
+	rb = rebase
 	sm = submodule
 	graph = log --all --decorate --oneline --graph
 	last = log -1
 	please = push --force-with-lease
+	root = rev-parse --show-toplevel
 [blame]
 	date = iso
 [branch]
@@ -63,6 +67,7 @@
 [interactive]
 	diffFilter = delta --color-only
 [log]
+	abbrevCommit = true
 	date = iso
 [merge]
 	conflictstyle = zdiff3
