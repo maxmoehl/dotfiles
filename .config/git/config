@@ -12,9 +12,11 @@
 	cp = cherry-pick
 	rb = rebase
 	sm = submodule
+	fix = commit --fixup
 	graph = log --all --decorate --oneline --graph
 	last = log -1
 	please = push --force-with-lease
+	recommit = "!git commit -eF \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\""
 	root = rev-parse --show-toplevel
 [blame]
 	date = iso
@@ -79,6 +81,7 @@
 	recurseSubmodules = check
 [rebase]
 	abbreviateCommands = true
+	autoSquash = true
 	autoStash = true
 [rerere]
 	enabled = true
