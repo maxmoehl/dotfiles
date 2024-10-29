@@ -1,0 +1,6 @@
+#!/bin/sh
+
+if [ -z "$(git diff --staged --name-only)" ]; then
+    echo "error: no changes staged for commit, aborting. (hint: bypass this check using '--no-verify')"
+    exit 1
+fi
