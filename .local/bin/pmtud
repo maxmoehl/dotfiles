@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+destination="${1}"
+if [ -z "${destination}" ]; then
+    echo "Usage: ${0} DESTINATION [ PROBES ]"
+    exit 1
+fi
+
+num_probes="${2:-4}"
+
+PING_FLAGS=()
+case "$(uname)" in
+    Darwin ) PING_FLAGS=( "-D" "-W" "1" ) ;;
+    Linux  ) PING_FLAGS=( "-M" "probe" "-W" "1" ) ;;
+    *      ) echo "error: unsupported platform '$(uname)'"; exit 1 ;;
+esac
+
+# Initial MTU values
+low="68" # Minimum MTU size (ICMP header is 8 bytes and IP header is 20 bytes)
+high="9000"
+max_success="0"
+
+while [ "$((high - low))" -gt 1 ]; do
+    mid="$(((low + high) / 2))"
+
+    echo -n "[$(date -Iseconds)} Probing ${destination} with ${mid} bytes ..."
+
+    if ping "${PING_FLAGS[@]}" -s "$((mid - 28))" -c "${num_probes}" "${destination}" &> /dev/null; then
+        echo " succeeded."
+        max_success="${mid}"
+        low="${mid}"
+    else
+        echo " failed."
+        high="${mid}"
+    fi
+done
+
+echo "The highest supported MTU for '${destination}' is: ${max_success}"
