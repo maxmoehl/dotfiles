@@ -4,6 +4,8 @@ autoload -Uz compinit edit-command-line
 
 compinit
 
+compdef sship=ssh
+
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' menu select
 zstyle ':completion:*' verbose yes

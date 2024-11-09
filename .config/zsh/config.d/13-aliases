@@ -11,6 +11,7 @@ alias gp="git push"
 alias gr="git rebase"
 alias gs="git status"
 alias gam="git commit --amend --no-edit"
+alias gau="git add -u"
 alias gco="git checkout"
 alias gds="git diff --staged"
 alias grb="git rebase \"\$(git merge-base origin/HEAD HEAD)\""
@@ -60,6 +61,24 @@ fi
 alias cdr='cd $(git rev-parse --show-toplevel)'
 alias scp="scp -o 'RemoteCommand=none'"
 function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
+
+rgzf() {
+  rg \
+    --color=always \
+    --line-number \
+    --no-heading \
+    --smart-case \
+    "${@:-.}" \
+  | fzf \
+    --ansi \
+    --color "hl:-1:underline,hl+:-1:underline:reverse" \
+    --delimiter : \
+    --preview 'bat --color=always {1} --highlight-line {2}' \
+    --preview-window '60%,border-bottom,+{2}+3/3,~3' \
+    --header "Return: Helix; ^O: Open" \
+    --layout reverse \
+    --bind 'enter:become(hx {1}:{2}),ctrl-o:execute-silent(open {1})'
+}
 
 # managing this configuration
 alias dotfiles="git -C '${HOME}' --git-dir '.local/share/dotfiles'"
