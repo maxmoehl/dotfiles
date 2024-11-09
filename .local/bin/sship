@@ -23,8 +23,8 @@
 #   SSHIP_DEBUG : Enabled debug output.
 #   SSHIP_SILENT: Disable all log out (takes precedence over SSHIP_DEBUG).
 #
-# The files to be uploaded are taken from ~/.local/share/sship. The directory is uploaded as-is to
-# the home directory of the user on the remote system.
+# The files to be uploaded are by default taken from ~/.local/share/sship. The directory is
+# uploaded as-is to the home directory of the user on the remote system.
 #
 # It is recommended to configure the Control* parameters of your OpenSSH client to prevent frequent
 # prompts for authentication / passphrases. Copy-paste if you're lazy:
@@ -41,13 +41,6 @@
 # The script does not allow any custom SSH options on the command line, the user is expected to
 # provide those via ssh_config(5). Consequently it is not possible to execute one-of commands using
 # this script, only interactive shell sessions are supported.
-#
-# # Troubleshooting #
-#
-# 1. sship is not uploading my new files!
-#
-# If you previously uploaded your files, sship will create a .sship_uploaded file. As long as that
-# file exists it won't upload again. If still want to upload make sure to first delete that file.
 
 if [ -z "${SSHIP_HOME}" ]; then
   SSHIP_HOME="${HOME}/.local/share/sship"
