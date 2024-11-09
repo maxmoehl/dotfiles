@@ -8,6 +8,7 @@
 	l = pull
 	p = push
 	s = status
+	au = add --update
 	cl = clone --filter=blob:limit=100k
 	cp = cherry-pick
 	rb = rebase
@@ -56,7 +57,7 @@
 	output = compact
 	parallel = 16
 	prune = true
-	pruneTags = true
+	pruneTags = false
 	recurseSubmodules = on-demand
 [gpg]
 	format = ssh
@@ -73,6 +74,8 @@
 	date = iso
 [merge]
 	conflictstyle = zdiff3
+[pager]
+	blame = delta
 [pull]
 	ff = only
 [push]
