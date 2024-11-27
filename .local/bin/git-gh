@@ -60,7 +60,7 @@ __pr() {
 
   git fetch "${Force}" "${_pr_remote}" "pull/${_pr_id}/head:gh/pr-${_pr_id}"
 
-  if [ "${_pr_switch}" -eq "true" ]; then
+  if [ "${_pr_switch}" = "true" ]; then
     git switch "gh/pr-${_pr_id}"
   fi
 }
