@@ -1,0 +1,126 @@
+#!/bin/sh -e
+
+Force="--no-force"
+
+alias __shift='test "${#}" -gt 0 && shift'
+
+__error() {
+	echo "error: ${*}" > /dev/stderr
+	return 1
+}
+
+__open() {
+  _open_remote=origin
+  _open_selector=
+  if [ "${#}" -eq "1" ]; then
+    _open_selector="${1}"
+  elif [ "${#}" -eq "2" ]; then
+    _open_remote="${1}"
+    _open_selector="${2}"
+  fi
+
+  _open_path=
+  case "${_open_selector}" in
+    ""                      ) _open_path="/" ;;
+    "pull" | "pulls" | "pr" ) _open_path="/pulls" ;;
+    "issue" | "issues"      ) _open_path="/issues" ;;
+    *                       ) _open_path="/issues/${_open_selector}" ;;
+  esac
+
+  _open_url="$(git remote get-url "${_open_remote}")"
+  _open_url="${_open_url%.git}"
+
+  # mangle the SSH URL
+  if [ "${_open_url#git@}" != "${_open_url}" ]; then
+    _open_url="$(echo "${_open_url}" | sed -E -e 's/:/\//' -e 's/^git@/https:\/\//')"
+  fi
+
+  open "${_open_url}${_open_path}"
+}
+
+__pr() {
+  _pr_switch=
+  _pr_remote=origin
+  _pr_id=
+  while :; do
+		case "${1}" in
+			-s | --switch ) _pr_switch="true" ;;
+			-* )            __error "unknown flag '${1}'" ;;
+			* )             break ;;
+		esac
+		__shift
+	done
+
+  if [ "${#}" -eq "1" ]; then
+    _pr_id="${1}"
+  elif [ "${#}" -eq 2 ]; then
+    _pr_remote="${1}"
+    _pr_id="${2}"
+  fi
+
+  git fetch "${Force}" "${_pr_remote}" "pull/${_pr_id}/head:gh/pr-${_pr_id}"
+
+  if [ "${_pr_switch}" -eq "true" ]; then
+    git switch "gh/pr-${_pr_id}"
+  fi
+}
+
+__help() {
+  case "${1}" in
+    "" )
+      echo "Usage: git-gh [ FLAGS ] COMMAND [ ARGS ]"
+      echo
+      echo "git-gh - make working with GitHub on the CLI a breeze."
+      echo
+      echo "Commands:"
+      echo "  pr"
+      echo
+			echo "Flags:"
+			echo "  -v --verbose Enable debug logging using 'set -x'."
+      ;;
+    "help" )
+      echo "Usage: git-gh help [ COMMAND ]"
+      echo
+      echo "Show help for git-gh and any of its commands."
+      ;;
+    "open" )
+      echo "Usage: git-gh open [ REMOTE ] [ issue | pr | ID ]"
+      echo
+      echo "Open this repository in the UI. Currently only works on macOS as it calls the"
+      echo "open command."
+      ;;
+    "pr" )
+      echo "Usage: git-gh pr [ FLAGS ] [ REMOTE ] ID"
+      echo
+      echo "Setup a local branch for the given pull request ID. REMOTE will default to"
+      echo "'origin'. The branch will be located at 'gh/pr-ID'."
+      echo
+			echo "Flags:"
+			echo "  -s --switch Automatically switch to the created ref."
+      ;;
+    * ) __error "unknown command '${1}', try 'git gh help help'" ;;
+  esac
+}
+
+__gh() {
+  while :; do
+		case "${1}" in
+			-v | --verbose ) set -x ;;
+			-f | --force )   Force="--force" ;;
+			-* )             __error "unknown flag '${1}'" ;;
+			* )              break ;;
+		esac
+		__shift
+	done
+
+	_cmd="${1:-help}"
+	__shift
+	case "${_cmd}" in
+	  help ) __help "${@}" ;;
+	  open ) __open "${@}" ;;
+	  pr   ) __pr   "${@}" ;;
+		*    ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
+	esac
+}
+
+__gh "${@}"
