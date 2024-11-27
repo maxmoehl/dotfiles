@@ -113,7 +113,7 @@ __gh() {
       -v | --verbose ) set -x ;;
       -f | --force )   Force="--force" ;;
       -* )             __error "unknown flag '${1}'" ;;
-      * )              break ;;
+      *  )             break ;;
     esac
     __shift
   done
@@ -121,9 +121,9 @@ __gh() {
   _cmd="${1:-help}"
   __shift
   case "${_cmd}" in
-    help ) __help "${@}" ;;
-    open ) __open "${@}" ;;
-    pr   ) __pr   "${@}" ;;
+    help ) __help  "${@}" ;;
+    open ) __open  "${@}" ;;
+    pr   ) __pr    "${@}" ;;
     *    ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
   esac
 }
