@@ -5,8 +5,8 @@ Force="--no-force"
 alias __shift='test "${#}" -gt 0 && shift'
 
 __error() {
-	echo "error: ${*}" > /dev/stderr
-	return 1
+  echo "error: ${*}" > /dev/stderr
+  return 1
 }
 
 __open() {
@@ -30,7 +30,7 @@ __open() {
   _open_url="$(git remote get-url "${_open_remote}")"
   _open_url="${_open_url%.git}"
 
-  # mangle the SSH URL
+  # mangle SSH URLs
   if [ "${_open_url#git@}" != "${_open_url}" ]; then
     _open_url="$(echo "${_open_url}" | sed -E -e 's/:/\//' -e 's/^git@/https:\/\//')"
   fi
@@ -43,13 +43,13 @@ __pr() {
   _pr_remote=origin
   _pr_id=
   while :; do
-		case "${1}" in
-			-s | --switch ) _pr_switch="true" ;;
-			-* )            __error "unknown flag '${1}'" ;;
-			* )             break ;;
-		esac
-		__shift
-	done
+    case "${1}" in
+      -s | --switch ) _pr_switch="true" ;;
+      -* )            __error "unknown flag '${1}'" ;;
+      * )             break ;;
+    esac
+    __shift
+  done
 
   if [ "${#}" -eq "1" ]; then
     _pr_id="${1}"
@@ -73,10 +73,15 @@ __help() {
       echo "git-gh - make working with GitHub on the CLI a breeze."
       echo
       echo "Commands:"
+      echo "  help"
+      echo "  open"
       echo "  pr"
       echo
-			echo "Flags:"
-			echo "  -v --verbose Enable debug logging using 'set -x'."
+      echo "Flags:"
+      echo "  -v --verbose Enable debug logging using 'set -x'."
+      echo
+      echo "Dependencies:"
+      echo "  sed(1)"
       ;;
     "help" )
       echo "Usage: git-gh help [ COMMAND ]"
@@ -87,7 +92,7 @@ __help() {
       echo "Usage: git-gh open [ REMOTE ] [ issue | pr | ID ]"
       echo
       echo "Open this repository in the UI. Currently only works on macOS as it calls the"
-      echo "open command."
+      echo "'open' command."
       ;;
     "pr" )
       echo "Usage: git-gh pr [ FLAGS ] [ REMOTE ] ID"
@@ -95,8 +100,8 @@ __help() {
       echo "Setup a local branch for the given pull request ID. REMOTE will default to"
       echo "'origin'. The branch will be located at 'gh/pr-ID'."
       echo
-			echo "Flags:"
-			echo "  -s --switch Automatically switch to the created ref."
+      echo "Flags:"
+      echo "  -s --switch Automatically switch to the created ref."
       ;;
     * ) __error "unknown command '${1}', try 'git gh help help'" ;;
   esac
@@ -104,23 +109,23 @@ __help() {
 
 __gh() {
   while :; do
-		case "${1}" in
-			-v | --verbose ) set -x ;;
-			-f | --force )   Force="--force" ;;
-			-* )             __error "unknown flag '${1}'" ;;
-			* )              break ;;
-		esac
-		__shift
-	done
+    case "${1}" in
+      -v | --verbose ) set -x ;;
+      -f | --force )   Force="--force" ;;
+      -* )             __error "unknown flag '${1}'" ;;
+      * )              break ;;
+    esac
+    __shift
+  done
 
-	_cmd="${1:-help}"
-	__shift
-	case "${_cmd}" in
-	  help ) __help "${@}" ;;
-	  open ) __open "${@}" ;;
-	  pr   ) __pr   "${@}" ;;
-		*    ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
-	esac
+  _cmd="${1:-help}"
+  __shift
+  case "${_cmd}" in
+    help ) __help "${@}" ;;
+    open ) __open "${@}" ;;
+    pr   ) __pr   "${@}" ;;
+    *    ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
+  esac
 }
 
 __gh "${@}"
