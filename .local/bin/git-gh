@@ -1,6 +1,8 @@
 #!/bin/sh -e
 
 Force="--no-force"
+# Should only be read via __remote.
+Remote=
 
 alias __shift='test "${#}" -gt 0 && shift'
 
@@ -9,39 +11,100 @@ __error() {
   return 1
 }
 
-__open() {
-  _open_remote=origin
-  _open_selector=
-  if [ "${#}" -eq "1" ]; then
-    _open_selector="${1}"
-  elif [ "${#}" -eq "2" ]; then
-    _open_remote="${1}"
-    _open_selector="${2}"
+# Usage: __remote [ DIR ]
+#
+# Get the remote to operate on, if DIR is given, do so from that directory
+# instead of $PWD. Order is: --remote flag, gh.defaultRemote config, 'origin'.
+__remote() {
+  _remote_dir="${1:-${PWD}}"
+  if [ -n "${Remote}" ]; then
+    echo "${Remote}"
+  else
+    git -C "${_remote_dir}" config get --default origin gh.defaultRemote
   fi
-
-  _open_path=
-  case "${_open_selector}" in
-    ""                      ) _open_path="/" ;;
-    "pull" | "pulls" | "pr" ) _open_path="/pulls" ;;
-    "issue" | "issues"      ) _open_path="/issues" ;;
-    *                       ) _open_path="/issues/${_open_selector}" ;;
-  esac
-
-  _open_url="$(git remote get-url "${_open_remote}")"
-  _open_url="${_open_url%.git}"
-
-  # mangle SSH URLs
-  if [ "${_open_url#git@}" != "${_open_url}" ]; then
-    _open_url="$(echo "${_open_url}" | sed -E -e 's/:/\//' -e 's/^git@/https:\/\//')"
-  fi
-
-  open "${_open_url}${_open_path}"
 }
 
+# Usage: __remote_url [ DIR ]
+#
+# Resolve remote URL for the current remote, if DIR is given, do so from that
+# directory instead $PWD.
+__remote_url() {
+  _remote_url_dir="${1:-${PWD}}"
+  _remote_url="$(git -C "${_remote_url_dir}" remote get-url "$(__remote "${_remote_url_dir}")")"
+  _remote_url="${_remote_url%.git}"
+
+  # mangle SSH URLs
+  if [ "${_remote_url#git@}" != "${_remote_url}" ]; then
+    _remote_url="$(echo "${_remote_url}" | sed -E -e 's|:|/|' -e 's|^git@|https://|')"
+  fi
+
+  echo "${_remote_url}"
+}
+
+# Usage: __open [ TYPE [ ... ] ]
+__open() {
+  if [ "${#}" -eq 0 ]; then
+    open "$(__remote_url)"
+    return
+  fi
+
+  _open_type="${1}"
+  __shift
+
+  case "${_open_type}" in
+    f* ) __open_file "${@}" ;;
+    i* ) __open_issue "${@}" ;;
+    p* ) __open_pull "${@}" ;;
+    *  ) __error "unknown sub-command '${_open_type}'" ;;
+  esac
+}
+
+# Usage: __open_file PATH [ LINE ]
+__open_file() {
+  if [ "${#}" -lt 1 ] || [ "${#}" -gt 2 ]; then
+    __error "need one or two arguments, got ${#}"
+  fi
+
+  # We might not be in the repository we want to open so we have to go there.
+  _open_file_tdir="$(dirname "${1}")"
+  _open_file_rroot="$(git -C "${_open_file_tdir}" rev-parse --show-toplevel)/"
+  _open_file_fpath="$(realpath "${1}")"
+  _open_file_commit="$(git -C "${_open_file_tdir}" rev-parse HEAD)"
+
+  _open_file_url="$(__remote_url "${_open_file_tdir}")/blob/${_open_file_commit}/${_open_file_fpath##"${_open_file_rroot}"}"
+  if [ "${#}" -eq 2 ]; then
+    _open_file_url="${_open_file_url}#L${2}"
+  fi
+
+  open "${_open_file_url}"
+}
+
+# Usage: __open_issue [ ID ]
+__open_issue() {
+  if [ "${#}" -eq 0 ]; then
+    open "$(__remote_url)/issues"
+  elif [ "${#}" -eq 1 ]; then
+    open "$(__remote_url)/issues/${1}"
+  else
+    __error "exceess arguments"
+  fi
+}
+
+# Usage: __open_pull [ ID ]
+__open_pull() {
+  if [ "${#}" -eq 0 ]; then
+    open "$(__remote_url)/pulls"
+  elif [ "${#}" -eq 1 ]; then
+  # /issues/$id will redirect to pull requests as well
+    open "$(__remote_url)/pull/${1}"
+  else
+    __error "exceess arguments"
+  fi
+}
+
+# Usage: __pr [ -s | --switch ] ID
 __pr() {
   _pr_switch=
-  _pr_remote=origin
-  _pr_id=
   while :; do
     case "${1}" in
       -s | --switch ) _pr_switch="true" ;;
@@ -51,20 +114,18 @@ __pr() {
     __shift
   done
 
-  if [ "${#}" -eq "1" ]; then
-    _pr_id="${1}"
-  elif [ "${#}" -eq 2 ]; then
-    _pr_remote="${1}"
-    _pr_id="${2}"
+  if [ "${#}" -eq 0 ]; then
+    __error "missing PR id"
   fi
 
-  git fetch "${Force}" "${_pr_remote}" "pull/${_pr_id}/head:gh/pr-${_pr_id}"
+  git fetch "${Force}" "$(__remote)" "pull/${1}/head:gh/pr-${1}"
 
   if [ "${_pr_switch}" = "true" ]; then
-    git switch "gh/pr-${_pr_id}"
+    git switch "gh/pr-${1}"
   fi
 }
 
+# Usage: __help COMMAND
 __help() {
   case "${1}" in
     "" )
@@ -78,24 +139,41 @@ __help() {
       echo "  pr"
       echo
       echo "Flags:"
-      echo "  -v --verbose Enable debug logging using 'set -x'."
+      echo "  -f --force   Enable force (default: disabled)."
+      echo "  -r --remote  Select remote to resolve to (default: origin)."
+      echo "  -v --verbose Enable debug logging using 'set -x' (default: disabled)."
+      echo
+      echo "Configuration:"
+      echo "  gh.defaultRemote Default remote to resolve to (default: origin)."
       echo
       echo "Dependencies:"
       echo "  sed(1)"
       ;;
     "help" )
-      echo "Usage: git-gh help [ COMMAND ]"
+      echo "Usage: git-gh help [ help | open | pr ]"
       echo
       echo "Show help for git-gh and any of its commands."
       ;;
     "open" )
-      echo "Usage: git-gh open [ REMOTE ] [ issue | pr | ID ]"
+      echo "Usage: git-gh open"
+      echo "       git-gh open { issue | pull } [ ID ]"
+      echo "       git-gh open file PATH [ LINE ]"
       echo
-      echo "Open this repository in the UI. Currently only works on macOS as it calls the"
-      echo "'open' command."
+      echo "git-gh open"
+      echo "  Open the repository in the GitHub UI."
+      echo
+      echo "git-gh open { issue | pull } [ ID ]"
+      echo "  Open the issues / pull-requests tab of the repository or the specific issue /"
+      echo "  pull-request when an ID is provided."
+      echo
+      echo "git-gh open file PATH [ LINE ]"
+      echo "  Open the file on GitHub, optionally on a specific line."
+      echo
+      echo "BUGS"
+      echo "This command only works on macOS as it relies on the open(1) command."
       ;;
     "pr" )
-      echo "Usage: git-gh pr [ FLAGS ] [ REMOTE ] ID"
+      echo "Usage: git-gh pr [ FLAGS ] ID"
       echo
       echo "Setup a local branch for the given pull request ID. REMOTE will default to"
       echo "'origin'. The branch will be located at 'gh/pr-ID'."
@@ -110,8 +188,9 @@ __help() {
 __gh() {
   while :; do
     case "${1}" in
+      -f | --force   ) Force="--force" ;;
+      -r | --remote  ) Remote="${2}"; __shift ;;
       -v | --verbose ) set -x ;;
-      -f | --force )   Force="--force" ;;
       -* )             __error "unknown flag '${1}'" ;;
       *  )             break ;;
     esac
