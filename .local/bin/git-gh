@@ -175,8 +175,8 @@ __help() {
     "pr" )
       echo "Usage: git-gh pr [ FLAGS ] ID"
       echo
-      echo "Setup a local branch for the given pull request ID. REMOTE will default to"
-      echo "'origin'. The branch will be located at 'gh/pr-ID'."
+      echo "Setup a local branch for the given pull request ID. The branch will be located"
+      echo "at 'gh/pr-ID'."
       echo
       echo "Flags:"
       echo "  -s --switch Automatically switch to the created ref."
