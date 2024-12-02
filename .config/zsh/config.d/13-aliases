@@ -77,7 +77,7 @@ rgzf() {
     --preview-window '60%,border-bottom,+{2}+3/3,~3' \
     --header "Return: Helix; ^O: Open" \
     --layout reverse \
-    --bind 'enter:become(hx {1}:{2}),ctrl-o:execute-silent(open {1})'
+    --bind 'enter:become(hx {1}:{2}),ctrl-o:execute-silent(git gh open file {1} {2})'
 }
 
 # managing this configuration
