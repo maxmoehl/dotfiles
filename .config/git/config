@@ -62,7 +62,7 @@
 [gpg]
 	format = ssh
 [help]
-	autoCorrect = prompt
+	autoCorrect = never
 [http]
 	cookieFile = ~/.config/git/cookies
 [init]
