@@ -43,20 +43,33 @@ __remote_url() {
 
 # Usage: __open [ TYPE [ ... ] ]
 __open() {
-  if [ "${#}" -eq 0 ]; then
-    open "$(__remote_url)"
-    return
-  fi
+  _open_print=
+  while :; do
+    case "${1}" in
+      -p | --print ) _open_print="true" ;;
+      -*           ) __error "unknown flag '${1}'" ;;
+      *            ) break ;;
+    esac
+    __shift
+  done
 
-  _open_type="${1}"
+  _open_type="${1:-repo}"
   __shift
 
+  _open_url=
   case "${_open_type}" in
-    f* ) __open_file "${@}" ;;
-    i* ) __open_issue "${@}" ;;
-    p* ) __open_pull "${@}" ;;
+    r* ) _open_url="$(__remote_url)" ;;
+    f* ) _open_url="$(__open_file "${@}")" ;;
+    i* ) _open_url="$(__open_issue "${@}")" ;;
+    p* ) _open_url="$(__open_pull "${@}")" ;;
     *  ) __error "unknown sub-command '${_open_type}'" ;;
   esac
+
+  if [ "${_open_print}" = "true" ]; then
+    echo "${_open_url}"
+  else
+    open "${_open_url}"
+  fi
 }
 
 # Usage: __open_file PATH [ LINE ]
@@ -76,15 +89,15 @@ __open_file() {
     _open_file_url="${_open_file_url}#L${2}"
   fi
 
-  open "${_open_file_url}"
+  echo "${_open_file_url}"
 }
 
 # Usage: __open_issue [ ID ]
 __open_issue() {
   if [ "${#}" -eq 0 ]; then
-    open "$(__remote_url)/issues"
+    echo "$(__remote_url)/issues"
   elif [ "${#}" -eq 1 ]; then
-    open "$(__remote_url)/issues/${1}"
+    echo "$(__remote_url)/issues/${1}"
   else
     __error "exceess arguments"
   fi
@@ -93,10 +106,10 @@ __open_issue() {
 # Usage: __open_pull [ ID ]
 __open_pull() {
   if [ "${#}" -eq 0 ]; then
-    open "$(__remote_url)/pulls"
+    echo "$(__remote_url)/pulls"
   elif [ "${#}" -eq 1 ]; then
   # /issues/$id will redirect to pull requests as well
-    open "$(__remote_url)/pull/${1}"
+    echo "$(__remote_url)/pull/${1}"
   else
     __error "exceess arguments"
   fi
@@ -155,21 +168,24 @@ __help() {
       echo "Show help for git-gh and any of its commands."
       ;;
     "open" )
-      echo "Usage: git-gh open"
-      echo "       git-gh open { issue | pull } [ ID ]"
-      echo "       git-gh open file PATH [ LINE ]"
+      echo "Usage: git-gh open [ FLAGS ]"
+      echo "       git-gh open [ FLAGS ] { issue | pull } [ ID ]"
+      echo "       git-gh open [ FLAGS ] file PATH [ LINE ]"
       echo
-      echo "git-gh open"
+      echo "git-gh open [ FLAGS ]"
       echo "  Open the repository in the GitHub UI."
       echo
-      echo "git-gh open { issue | pull } [ ID ]"
+      echo "git-gh open [ FLAGS ] { issue | pull } [ ID ]"
       echo "  Open the issues / pull-requests tab of the repository or the specific issue /"
       echo "  pull-request when an ID is provided."
       echo
-      echo "git-gh open file PATH [ LINE ]"
+      echo "git-gh open [ FLAGS ] file PATH [ LINE ]"
       echo "  Open the file on GitHub, optionally on a specific line."
       echo
-      echo "BUGS"
+      echo "Flags:"
+      echo "  -p --print Instead of calling open, print the resulting URL to stdout."
+      echo
+      echo "Bugs:"
       echo "This command only works on macOS as it relies on the open(1) command."
       ;;
     "pr" )
