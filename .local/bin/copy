@@ -1,0 +1,10 @@
+#!/bin/sh -e
+# Usage: copy TEXT...
+#
+# The entered line will be cleared afterwards to prevent leaking secrets.
+
+# TODO: linux support
+printf "${*}" | pbcopy
+
+printf '\e[A\e[K'
+printf '**redacted**\n'
