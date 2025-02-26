@@ -19,4 +19,4 @@ text-width = 100
 "en-US" = [ "PROFANITY", "ARROWS", "WHITESPACE_RULE" ]
 
 [language-server.ltex-ls.config.ltex.dictionary]
-"en-US" = [ "gorouter", "ltex-ls", "Alacritty", "CCEE", "VXLAN" ]
+"en-US" = [ "gorouter", "ltex-ls", "Alacritty", "CCEE", "VXLAN", "Unicast", "routable", "IaaS", "VNet" ]
