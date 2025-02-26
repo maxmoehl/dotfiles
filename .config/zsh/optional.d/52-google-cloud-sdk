@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+source ~/.local/opt/google-cloud-sdk/path.zsh.inc
+source ~/.local/opt/google-cloud-sdk/completion.zsh.inc

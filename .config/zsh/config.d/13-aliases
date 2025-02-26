@@ -23,6 +23,25 @@ alias glast="git log --reverse --oneline --decorate=no \"\$(git merge-base origi
 alias glog="git log"
 alias gplease="git push --force-with-lease"
 
+function gsww() {
+  # If not ( `gsw <branch>` OR `gsw -c <branch>` ) AND is multi-worktree
+  if ! [[ ( "${#}" -eq 1 || ( "${#}" -eq 2 && "${1}" -eq "-c" ) ) && "$(git worktree list | wc -l)" -gt 1 ]]; then
+    # not a multi-worktree repository or non-standard usage of gsw
+    git switch "${@}"
+    return
+  fi
+
+  target_dir=""
+  if [[ "${1}" = "-c" ]]; then
+    target_dir="$(git rev-parse --show-toplevel)/../$(basename "${2}")"
+    git worktree add -b "${2}" "${target_dir}"
+  else
+    target_dir="$(git rev-parse --show-toplevel)/../$(basename "${1}")"
+    git worktree add "${target_dir}" "${1}"
+  fi
+  cd "${target_dir}"
+}
+
 # ls
 alias ls="ls --color=auto --time-style=+'%Y-%m-%d %H:%M'"
 alias l="ls -lh"
@@ -77,7 +96,15 @@ rgzf() {
     --preview-window '60%,border-bottom,+{2}+3/3,~3' \
     --header "Return: Helix; ^O: Open" \
     --layout reverse \
-    --bind 'enter:become(hx {1}:{2}),ctrl-o:execute-silent(git gh open file {1} {2})'
+    --bind 'enter:become(hx {1}:{2}),ctrl-o:execute-silent(git gh open file {1} {2}),c:execute-silent(git gh open -p file {1} {2} | pbcopy)'
+}
+
+pandox() {
+  # TODO: find a good way to copy to clipboard across different OSes
+  RESULT="$(pbpaste | pandoc -f "${1:?from required}" -t "${2:?to required}")";
+  if [[ -n "${RESULT}" ]]; then
+      pbcopy <<< "${RESULT}";
+  fi
 }
 
 # managing this configuration

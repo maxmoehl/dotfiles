@@ -1,4 +1,4 @@
 #!/usr/bin/env zsh
 
+alias edit=vim
 export EDITOR=vim
-

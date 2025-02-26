@@ -1,4 +1,0 @@
-#!/usr/bin/env zsh
-
-export TT_HOME_DIR="${HOME}/.config/tt"
-
