@@ -63,6 +63,7 @@ option_as_alt = "OnlyLeft"
 live_config_reload = true
 import = [
   "~/.config/alacritty/github_light.toml",
+  "~/.config/alacritty/work.toml",
 ]
 
 [terminal]
