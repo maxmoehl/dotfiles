@@ -23,6 +23,15 @@
 #   SSHIP_DEBUG : Enabled debug output.
 #   SSHIP_SILENT: Disable all log out (takes precedence over SSHIP_DEBUG).
 #
+# The behaviour of sship can be extended by writing scripts which are called at specific points
+# (list is in order):
+#
+#   sship-pre-session: Before the connection to the remote host is established for the first time.
+#   sship-pre-upload : Before uploading the files, after session is established.
+#   sship-pre-ssh    : Before handing over to ssh, after uploading files.
+#
+# These scripts must be available in the path to be called.
+#
 # The files to be uploaded are by default taken from ~/.local/share/sship. The directory is
 # uploaded as-is to the home directory of the user on the remote system.
 #
@@ -92,13 +101,28 @@ debug "setting up temporary directory"
 TMP_DIR="$(mktemp -d)"
 debug "temporary directory at '${TMP_DIR}'"
 
+if command -v sship-pre-session > /dev/null; then
+	debug "running pre-session hook"
+	sship-pre-session
+fi
+
 info "establishing session, you might be prompted to authenticate"
 ssh -o RemoteCommand=none "${@}" true > /dev/null 2> "${TMP_DIR}/ssh01.err" || \
 	fail "failed to connect: $(cat "${TMP_DIR}/ssh01.err")"
 
+if command -v sship-pre-upload > /dev/null; then
+	debug "running pre-upload hook"
+	sship-pre-upload
+fi
+
 info "uploading files..."
 rsync -a --copy-links -e 'ssh -o RemoteCommand=none' "${SSHIP_HOME}/./" "${DESTINATION}:" > /dev/null 2> /"${TMP_DIR}/rsync01.err" ||
   fail "failed to upload files: $(cat "${TMP_DIR}/rsync01.err")"
+
+if command -v sship-pre-ssh > /dev/null; then
+	debug "running pre-ssh hook"
+	sship-pre-ssh
+fi
 
 clean_tmp
 info "dropping you into SSH..."
