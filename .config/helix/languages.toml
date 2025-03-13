@@ -15,6 +15,13 @@ file-types = [ "txt" ]
 auto-format = false
 text-width = 100
 
+[language-server.gopls]
+command = "gopls"
+args = ["-logfile=/tmp/gopls.log",  "serve"]
+
+[language-server.gopls.config]
+"ui.diagnostic.staticcheck" = true
+
 [language-server.ltex-ls.config.ltex.disabledRules]
 "en-US" = [ "PROFANITY", "ARROWS", "WHITESPACE_RULE" ]
 
