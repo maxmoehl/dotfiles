@@ -1,3 +1,0 @@
-#!/usr/bin/env zsh
-
-alias drawio="open -na /Applications/draw.io.app --args --enable-plugins"
