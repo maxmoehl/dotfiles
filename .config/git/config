@@ -13,6 +13,7 @@
 	cp = cherry-pick
 	rb = rebase
 	sm = submodule
+	advance = merge --ff-only
 	fix = commit --fixup
 	graph = log --all --decorate --oneline --graph
 	last = log -1
@@ -23,12 +24,15 @@
 	date = iso
 [branch]
 	sort = -committerdate
+[checkout]
+	defaultRemote = origin
 [column]
 	ui = auto
 [commit]
 	gpgSign = true
 	status = true
 	template = ~/.config/git/message
+	verbose = true
 [core]
 	attributesFile = ~/.config/git/attributes
 	autocrlf = input
@@ -45,7 +49,9 @@
 	syntax-theme = GitHub
 [diff]
 	algorithm = histogram
-	colorMoved = false
+	colorMoved = false # messes with git-delta
+	mnemonicPrefix = true
+	renames = true
 [diff "pem"]
 	binary = true
 	textconv = openssl x509 -noout -text -in
@@ -53,6 +59,7 @@
 	binary = true
 	textconv = echo .dump | sqlite3
 [fetch]
+	all = true
 	negotiationAlgorithm = skipping
 	output = compact
 	parallel = 16
@@ -61,6 +68,8 @@
 	recurseSubmodules = on-demand
 [gpg]
 	format = ssh
+[grep]
+	patternType = extended
 [help]
 	autoCorrect = never
 [http]
@@ -72,6 +81,7 @@
 [log]
 	abbrevCommit = true
 	date = iso
+	decorate = short
 [merge]
 	conflictstyle = zdiff3
 [pager]
@@ -86,6 +96,8 @@
 	abbreviateCommands = true
 	autoSquash = true
 	autoStash = true
+	missingCommitsCheck = warn
+	stat = true
 [rerere]
 	enabled = true
 	autoUpdate = true
@@ -95,5 +107,8 @@
 	aheadBehind = true
 	branch = true
 	short = true
+	showStash = true
+[tag]
+	sort = -version:refname
 [user]
 	signingkey = ~/.ssh/id_ed25519.pub
