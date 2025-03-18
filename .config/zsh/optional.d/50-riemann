@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-alias update-riemann='curl -sSfLn -o "${HOME}/.local/share/riemann.jar" -H "Accept: application/octet-stream" "$(curl -sSfn "https://github.tools.sap/api/v3/repos/cloudfoundry/riemann/releases/latest" | jq -r ".assets[0].url")"'
-alias riemann="java -cp '${HOME}/.local/share/riemann.jar' riemann.bin"
-
