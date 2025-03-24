@@ -59,6 +59,8 @@ __open() {
   _open_url=
   case "${_open_type}" in
     r* ) _open_url="$(__remote_url)" ;;
+    b* ) _open_url="$(__open_branch "${@}")" ;;
+    c* ) _open_url="$(__open_commit "${@}")" ;;
     f* ) _open_url="$(__open_file "${@}")" ;;
     i* ) _open_url="$(__open_issue "${@}")" ;;
     p* ) _open_url="$(__open_pull "${@}")" ;;
@@ -69,6 +71,28 @@ __open() {
     echo "${_open_url}"
   else
     open "${_open_url}"
+  fi
+}
+
+# Usage: __open_branch [ NAME ]
+__open_branch() {
+  if [ "${#}" -eq 0 ]; then
+    echo "$(__remote_url)/tree/$(git branch --show-current)"
+  elif [ "${#}" -eq 1 ]; then
+    echo "$(__remote_url)/tree/${1}"
+  else
+    __error "exceess arguments"
+  fi
+}
+
+# Usage: __open_commit [ REV ]
+__open_commit() {
+  if [ "${#}" -eq 0 ]; then
+    echo "$(__remote_url)/commits"
+  elif [ "${#}" -eq 1 ]; then
+    echo "$(__remote_url)/commit/$(git rev-parse "${1}")"
+  else
+    __error "exceess arguments"
   fi
 }
 
@@ -169,11 +193,20 @@ __help() {
       ;;
     "open" )
       echo "Usage: git-gh open [ FLAGS ]"
+      echo "       git-gh open [ FLAGS ] branch [ NAME ]"
+      echo "       git-gh open [ FLAGS ] commit [ REV ]"
       echo "       git-gh open [ FLAGS ] { issue | pull } [ ID ]"
       echo "       git-gh open [ FLAGS ] file PATH [ LINE ]"
       echo
       echo "git-gh open [ FLAGS ]"
       echo "  Open the repository in the GitHub UI."
+      echo
+      echo "git-gh open [ FLAGS ] branch [ NAME ]"
+      echo "  Open the current branch or the one provided on GitHub."
+      echo
+      echo "git-gh open [ FLAGS ] commit [ REV ]"
+      echo "  Open the commits tab of the repository or the specific commit which REV"
+      echo "  resolves to, if provided."
       echo
       echo "git-gh open [ FLAGS ] { issue | pull } [ ID ]"
       echo "  Open the issues / pull-requests tab of the repository or the specific issue /"
