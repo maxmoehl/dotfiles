@@ -79,6 +79,7 @@ fi
 # other
 alias cdr='cd $(git rev-parse --show-toplevel)'
 alias scp="scp -o 'RemoteCommand=none'"
+alias 2fa="ykman oath accounts code --single"
 function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
 
 rgzf() {
@@ -108,5 +109,12 @@ pandox() {
 }
 
 # managing this configuration
-alias dotfiles="git -C '${HOME}' --git-dir '.local/share/dotfiles'"
-alias dotf=dotfiles
+dotf() {
+  if ! test -L ~/.zshenv; then
+    echo "dotfiles not managed by stow"
+    return 1
+  fi
+  __stow_dir="$(realpath "$(dirname "${HOME}/$(readlink "${HOME}/.zshenv")")/..")"
+
+  stow --dotfiles -d "${__stow_dir}" -t ~ "${@}"
+}
