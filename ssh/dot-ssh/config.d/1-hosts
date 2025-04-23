@@ -8,14 +8,6 @@ Host vps.int.moehl.eu
   HostName 188.68.39.246
   User max
 
-Host super6.int.moehl.eu
-  HostName 2600:1900:4011:13e::
-  User maximilian.moehl
-
-Host super4.int.moehl.eu
-  HostName 34.76.166.192
-  User maximilian.moehl
-
 Host *.int.moehl.eu
   RequestTTY yes
   RemoteCommand tmux -2u new -A -s main
