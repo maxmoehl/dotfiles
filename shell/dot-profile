@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# System
+export PATH="${HOME}/.local/bin:${PATH}"
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_CACHE_HOME="${HOME}/.cache"
+
+export LANG="en_US.UTF-8"
+
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+if command -v hx > /dev/null 2> /dev/null; then
+  export EDITOR=hx
+else
+  export EDITOR=vim
+fi
+
+export PAGER=less
+
+# Go
+export GOCACHE="${HOME}/.cache/go"
+export GOMODCACHE="${HOME}/.cache/go-mod"
+export GOBIN="${HOME}/.local/bin"
+
+# Rust
+if [[ -f ~/.local/share/cargo/env ]]; then
+  source ~/.local/share/cargo/env
+fi
+
+# tt
+export TT_HOME_DIR="${HOME}/.config/tt"

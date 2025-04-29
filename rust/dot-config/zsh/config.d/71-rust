@@ -1,3 +1,0 @@
-#!/usr/bin/env zsh
-
-source "${HOME}/.local/share/cargo/env"

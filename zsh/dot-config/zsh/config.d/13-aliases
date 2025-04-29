@@ -82,6 +82,12 @@ alias scp="scp -o 'RemoteCommand=none'"
 alias 2fa="ykman oath accounts code --single"
 function cht.sh() { curl -s "cht.sh/${1:-}?style=xcode" | less -R; }
 
+if command -v hx &> /dev/null; then
+  alias edit=hx
+else
+  alias edit=vim
+fi
+
 rgzf() {
   rg \
     --color=always \
@@ -110,11 +116,11 @@ pandox() {
 
 # managing this configuration
 dotf() {
-  if ! test -L ~/.zshenv; then
+  if ! test -L ~/.profile; then
     echo "dotfiles not managed by stow"
     return 1
   fi
-  __stow_dir="$(realpath "$(dirname "${HOME}/$(readlink "${HOME}/.zshenv")")/..")"
+  __stow_dir="$(realpath "$(dirname "${HOME}/$(readlink "${HOME}/.profile")")/..")"
 
   stow --dotfiles -d "${__stow_dir}" -t ~ "${@}"
 }
