@@ -1,3 +1,5 @@
+abbr -a -- d docker
+abbr -a -- dc 'docker compose'
 abbr -a -- g git
 abbr -a -- ga 'git add'
 abbr -a -- gam 'git commit --amend --no-edit'
@@ -18,8 +20,8 @@ abbr -a -- gsu 'git submodule update --recursive'
 abbr -a -- gsw 'git switch'
 abbr -a -- k kubectl
 abbr -a -- l 'ls -lh'
-abbr -a -- la 'ls -lha'
-abbr -a -- ll 'ls -lhA'
+abbr -a -- ll 'ls -lha'
+abbr -a -- p podman
 abbr -a -- pip 'python3 -m pip'
 abbr -a -- scp '-o RemoteCommand=none'
 abbr -a -- venv 'python3 -m venv'
