@@ -61,7 +61,7 @@ __log() {
 	if [ -n "${SSHIP_SILENT}" ]; then
 		return
 	fi
-	_log_lvl="${1:-INFO }"
+	_log_lvl="${1:-INFO}"
 	if [ -z "${SSHIP_DEBUG}" ] && [ "${_log_lvl}" = "DEBUG" ]; then
 		return
 	fi
@@ -71,7 +71,7 @@ __log() {
 }
 
 alias debug='__log "DEBUG"'
-alias info='__log "INFO "'
+alias info='__log "INFO"'
 alias error='__log "ERROR"'
 
 clean_tmp() {
