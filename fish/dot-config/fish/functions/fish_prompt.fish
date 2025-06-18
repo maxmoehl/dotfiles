@@ -3,6 +3,7 @@ function fish_prompt
 
     echo -n (set_color red)
     if test -n "$SSH_CONNECTION"
+        set prepend_space true
         echo -n "[$(prompt_hostname)]"
     end
 
