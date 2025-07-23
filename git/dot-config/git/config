@@ -77,6 +77,7 @@
 	defaultBranch = main
 [interactive]
 	diffFilter = delta --color-only
+	singleKey = true
 [log]
 	abbrevCommit = true
 	date = iso
