@@ -1,4 +1,8 @@
 [[language]]
+name = "go"
+language-servers = [ "gopls" ]
+
+[[language]]
 name = "markdown"
 language-servers = [ "marksman", "ltex-ls"]
 
@@ -21,6 +25,7 @@ args = ["-logfile=/tmp/gopls.log",  "serve"]
 
 [language-server.gopls.config]
 "ui.diagnostic.staticcheck" = true
+"ui.diagnostic.analyses" = { ST1000 = false }
 
 [language-server.ltex-ls.config.ltex.disabledRules]
 "en-US" = [ "PROFANITY", "ARROWS", "WHITESPACE_RULE" ]
