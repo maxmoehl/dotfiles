@@ -10,6 +10,14 @@ scrolloff    = 10
 text-width   = 100
 true-color   = true
 
+[editor.file-picker]
+# true = ignore files which are ignored / hidden; false = show them
+git-exclude = false
+git-global  = true
+git-ignore  = false
+hidden      = false
+ignore      = true
+
 [editor.indent-guides]
 character   = "▏"
 render      = true
