@@ -1,4 +1,8 @@
 [[language]]
+name = "c"
+indent = { unit = "\t", tab-width = 8 }
+
+[[language]]
 name = "go"
 language-servers = [ "gopls" ]
 
