@@ -1,6 +1,13 @@
 [[language]]
 name = "c"
+file-types = ["c", "h"]
 indent = { unit = "\t", tab-width = 8 }
+
+[[language]]
+name = "cpp"
+# Copy of upstream, minus 'h' as we want those to be interpreted as C.
+# https://github.com/helix-editor/helix/blob/f0be627dcb5b9f780a4bfa6ae012370d7c41d3be/languages.toml#L625
+file-types = ["cc", "hh", "c++", "cpp", "hpp", "ipp", "tpp", "cxx", "hxx", "ixx", "txx", "ino", "C", "H", "cu", "cuh", "cppm", "h++", "ii", "inl", { glob = ".hpp.in" }, { glob = ".h.in" }]
 
 [[language]]
 name = "go"
