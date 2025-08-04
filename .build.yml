@@ -17,6 +17,6 @@ triggers:
 tasks:
 - mirror: |
     cd "${repo_name}"
-    test "$(git branch --show-current)" = "${branch_name}" || complete-build
+    test "${GIT_REF}" = "refs/heads/${branch_name}" || complete-build
     git remote add github "git@github.com:maxmoehl/${repo_name}"
     git push github "${branch_name}"
