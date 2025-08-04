@@ -1,0 +1,11 @@
+image: alpine/latest
+arch: x86_64
+packages:
+- git
+sources:
+- https://git.sr.ht/~maxmoehl/dotfiles
+tasks:
+- mirror: |
+    cd dotfiles
+    git remote add github git@github.com:maxmoehl/dotfiles
+    git push github main
