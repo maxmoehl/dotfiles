@@ -7,8 +7,16 @@ sources:
 secrets:
 - 5db7b7f2-9b26-459c-9559-17145b1456f5 # GitHub maxmoehl ED25519
 - 93742e24-3a0d-4024-a53b-b44b72310a96 # known_hosts
+environment:
+- repo_name: dotfiles
+- branch_name: main
+triggers:
+- action: email
+  condition: failure
+  to: Max <sourcehut-ci@moehl.eu>
 tasks:
 - mirror: |
-    cd dotfiles
-    git remote add github git@github.com:maxmoehl/dotfiles
-    git push github main
+    cd "${repo_name}"
+    test "$(git branch --show-current)" = "${branch_name}" || complete-build
+    git remote add github "git@github.com:maxmoehl/${repo_name}"
+    git push github "${branch_name}"
