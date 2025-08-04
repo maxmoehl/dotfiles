@@ -8,8 +8,8 @@ secrets:
 - 5db7b7f2-9b26-459c-9559-17145b1456f5 # GitHub maxmoehl ED25519
 - 93742e24-3a0d-4024-a53b-b44b72310a96 # known_hosts
 environment:
-- repo_name: dotfiles
-- branch_name: main
+  repo_name: dotfiles
+  branch_name: main
 triggers:
 - action: email
   condition: failure
