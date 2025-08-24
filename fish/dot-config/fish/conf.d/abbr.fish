@@ -1,5 +1,5 @@
-abbr -a -- amp 'npx @sourcegraph/amp'
-abbr -a -- code 'npx @anthropic-ai/claude-code'
+abbr -a -- amp 'npx --yes @sourcegraph/amp@latest'
+abbr -a -- code 'npx --yes @anthropic-ai/claude-code@latest'
 abbr -a -- d docker
 abbr -a -- dc 'docker compose'
 abbr -a -- g git
