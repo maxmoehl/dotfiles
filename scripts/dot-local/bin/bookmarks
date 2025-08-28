@@ -1,0 +1,67 @@
+#!/bin/sh -e
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2024 Alexander Sulim
+# SPDX-FileCopyrightText: 2025 Maximilian Moehl
+
+# Copied from upstream repository on 2025-08-28.
+# URL: https://github.com/soulim/bookmarks.txt/tree/dd24501fa6e29aad2c5ef42c0aff224b2526ba24
+
+# bookmarks [ RANK ] [ URL ] [ TITLE... ]
+#
+# Usages:
+#   bookmarks
+#     Print all bookmarks. If fzf is installed show a picker to open a URL.
+#
+#   bookmarks URL
+#     Add bookmark with default rank 99 and no title.
+#
+#   bookmarks RANK URL
+#     Add bookmark with specified rank (two digits) and no title.
+#
+#   bookmarks URL TITLE...
+#     Add bookmark with default rank 99 and multi-word title.
+#
+#   bookmarks RANK URL TITLE...
+#     Add bookmark with specified rank (two digits) and multi-word title.
+#
+# Examples:
+#   bookmarks https://example.com
+#   bookmarks 10 https://example.com
+#   bookmarks https://example.com An example page
+#   bookmarks 10 https://example.com An example page
+
+BookmarksFile="${HOME}/bookmarks.txt"
+
+if ! [ -f "${BookmarksFile}" ]; then
+	touch "${BookmarksFile}"
+fi
+
+rank="99"
+url=""
+title=""
+
+if [ "$#" -eq 1 ]; then
+	url="${1}"
+elif [ "$#" -gt 1 ]; then
+	if expr "${1}" : '[0-9][0-9]' > /dev/null; then
+		rank="${1}"
+		shift
+	fi
+
+	if [ "$#" -gt 0 ]; then
+		url="${1}"
+		shift
+
+		if [ "$#" -gt 0 ]; then
+			title="$*"
+		fi
+	fi
+fi
+
+if [ -n "$url" ]; then
+	echo "$rank $url $title" >> "${BookmarksFile}"
+elif command -v fzf > /dev/null; then
+	sort "${BookmarksFile}" | fzf | cut -d ' ' -f 2 | xargs open
+else
+	sort "${BookmarksFile}"
+fi

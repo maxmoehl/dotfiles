@@ -1,4 +1,7 @@
 #!/bin/sh -e
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2025 Maximilian Moehl
+
 # Usage: copy TEXT...
 #
 # The entered line will be cleared afterwards to prevent leaking secrets.

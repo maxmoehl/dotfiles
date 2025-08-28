@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2025 Maximilian Moehl
 
 Force="--no-force"
 # Should only be read via __remote.
