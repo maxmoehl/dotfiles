@@ -3,3 +3,5 @@
 *.iml
 venv
 
+**/.claude/settings.local.json
+**/CLAUDE.local.md
