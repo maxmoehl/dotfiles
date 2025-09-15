@@ -1,20 +1,11 @@
+Host localhost
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+
 Host node.int.moehl.eu
-  HostName 192.168.178.91
-  User max
-
-Host lab.int.moehl.eu
-  User max
-
-Host vps.int.moehl.eu
-  HostName 188.68.39.246
-  User max
+  ForwardAgent yes
 
 Host *.int.moehl.eu
+  User max
   RequestTTY yes
   RemoteCommand tmux -2u new -A -s main
-
-Host rpi.moehl.eu
-  HostName 192.168.178.33
-  User pi
-  RequestTTY yes
-
