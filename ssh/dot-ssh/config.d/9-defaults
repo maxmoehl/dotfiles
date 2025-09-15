@@ -1,7 +1,0 @@
-Host *
-  ServerAliveInterval 10
-  ControlMaster auto
-  ControlPath ~/.ssh/master-%r@%h:%p
-  ControlPersist yes
-  ExitOnForwardFailure yes
-  GatewayPorts no

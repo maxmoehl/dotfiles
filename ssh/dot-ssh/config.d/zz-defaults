@@ -1,0 +1,10 @@
+# First option encountered is used, put defaults last to allow per-host
+# configuration to overwrite the default.
+
+Host *
+  ServerAliveInterval 10
+  ControlMaster auto
+  ControlPath ~/.local/run/ssh/%r@%h:%p
+  ControlPersist yes
+  ExitOnForwardFailure yes
+  GatewayPorts no
