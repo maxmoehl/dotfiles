@@ -15,7 +15,7 @@ language-servers = [ "gopls" ]
 
 [[language]]
 name = "markdown"
-language-servers = [ "marksman", "ltex-ls"]
+language-servers = [ "marksman", "ltex-ls-plus"]
 
 [[language]]
 name = "python"
@@ -25,7 +25,7 @@ auto-format = true
 name = "text"
 scope = "text.txt"
 roots = []
-language-servers = [ "ltex-ls" ]
+language-servers = [ "ltex-ls-plus" ]
 file-types = [ "txt" ]
 auto-format = false
 text-width = 100
@@ -38,8 +38,8 @@ args = ["-logfile=/tmp/gopls.log",  "serve"]
 "ui.diagnostic.staticcheck" = true
 "ui.diagnostic.analyses" = { ST1000 = false }
 
-[language-server.ltex-ls.config.ltex.disabledRules]
+[language-server.ltex-ls-plus.config.ltex.disabledRules]
 "en-US" = [ "PROFANITY", "ARROWS", "WHITESPACE_RULE" ]
 
-[language-server.ltex-ls.config.ltex.dictionary]
+[language-server.ltex-ls-plus.config.ltex.dictionary]
 "en-US" = [ "gorouter", "ltex-ls", "Alacritty", "CCEE", "VXLAN", "Unicast", "routable", "IaaS", "VNet" ]
