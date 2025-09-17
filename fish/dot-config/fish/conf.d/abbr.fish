@@ -1,4 +1,6 @@
+abbr -a -- abbrsave 'abbr | sort > ~/.config/fish/conf.d/abbr.fish'
 abbr -a -- claude 'npx --yes @anthropic-ai/claude-code@latest --permission-mode=plan'
+abbr -a -- cpr 'cp -r'
 abbr -a -- d docker
 abbr -a -- dc 'docker compose'
 abbr -a -- g git
