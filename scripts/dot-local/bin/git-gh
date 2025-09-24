@@ -2,6 +2,26 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2025 Maximilian Moehl
 
+# #========#
+# # git-gh #
+# #========#
+#
+# Make working with GitHub on the CLI a breeze.
+#
+# Implementation Notes
+# ====================
+#
+# FETCH_HEAD
+# ----------
+#
+# In git there exist one-shot pointers that GitHub uses to make PRs fetch-able
+# without having a persistent branch for them on the repository. When fetching
+# such a ref git will set the FETCH_HEAD ref which can be used until it is
+# overridden by another such fetch.
+#
+# Alternatively the 'foo:bar' syntax updates the local bar with whatever the
+# remote says foo is.
+
 Force="--no-force"
 # Should only be read via __remote.
 Remote=
@@ -41,6 +61,22 @@ __remote_url() {
   fi
 
   echo "${_remote_url}"
+}
+
+# Usage: __merge ID
+#
+# Fast-forward merge the given PR into the currenty checked-out branch.
+__merge() {
+  if [ "${#}" -eq 0 ]; then
+    __error "missing PR id"
+  fi
+
+  # TODO: We could add a --no-fetch flag that operates on a local branch created
+  # by git gh pr.
+
+  git fetch "${Force}" "$(__remote)" "pull/${1}/head"
+
+  git merge --ff-only FETCH_HEAD
 }
 
 # Usage: __open [ TYPE [ ... ] ]
@@ -193,6 +229,13 @@ __help() {
       echo
       echo "Show help for git-gh and any of its commands."
       ;;
+    "merge" )
+      echo "Usage: git-gh merge [ FLAGS ] ID"
+      echo
+      echo "Merge a pull request into the current branch by performing a fast-forward"
+      echo "only merge. It does not update the local branch but ensures the latest"
+      echo "version of the PR has been fetched."
+      ;;
     "open" )
       echo "Usage: git-gh open [ FLAGS ]"
       echo "       git-gh open [ FLAGS ] branch [ NAME ]"
@@ -251,10 +294,11 @@ __gh() {
   _cmd="${1:-help}"
   __shift
   case "${_cmd}" in
-    help ) __help  "${@}" ;;
-    open ) __open  "${@}" ;;
-    pr   ) __pr    "${@}" ;;
-    *    ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
+    h* ) __help  "${@}" ;;
+    m* ) __merge "${@}" ;;
+    o* ) __open  "${@}" ;;
+    p* ) __pr    "${@}" ;;
+    *  ) __error "unknown command '${_cmd}', try 'git gh help'" ;;
   esac
 }
 
