@@ -14,8 +14,8 @@ if test -x /opt/homebrew/bin/brew
 end
 
 # user paths always take precedence
-fish_add_path --path ~/.local/bin
-fish_add_path --path ~/.local/share/cargo/bin
+fish_add_path -g ~/.local/bin
+fish_add_path -g ~/.local/share/cargo/bin
 
 if command -q hx
     set -gx EDITOR hx
