@@ -1,5 +1,12 @@
 #!/usr/bin/env fish
 
+# Ensure we can find tmux if it exists.
+fish_add_path --global --move ~/.local/bin
+
+if status is-interactive && command -sq tmux && not set -q TMUX
+    exec tmux new-session -A -s main
+end
+
 set -gx XDG_CONFIG_HOME ~/.config
 set -gx XDG_CACHE_HOME ~/.cache
 
@@ -13,11 +20,11 @@ if test -x /opt/homebrew/bin/brew
     eval (/opt/homebrew/bin/brew shellenv fish)
 end
 
-# user paths always take precedence
-fish_add_path -g ~/.local/bin
-fish_add_path -g ~/.local/share/cargo/bin
+fish_add_path --global ~/.local/share/cargo/bin
+# This should _always_ be the first path to check.
+fish_add_path --global --move ~/.local/bin
 
-if command -q hx
+if command -sq hx
     set -gx EDITOR hx
     abbr -a -- edit hx
 else
