@@ -1,0 +1,23 @@
+#!/bin/sh -e
+
+NODE_NAME="${1?error: no node name provided}"
+POD_NAME="shell-${USER}-${NODE_NAME}-$(tr -dc 'az' < /dev/urandom | head -c 6)"
+
+cleanup() {
+    kubectl delete pod \
+	    --ignore-not-found=true \
+	    --wait=false \
+	    --timeout=10s \
+	    "${POD_NAME}"
+}
+
+trap cleanup EXIT TERM INT
+
+kubectl debug "node/$NODE_NAME" \
+  --stdin=true \
+  --tty=true \
+  --pod-name="$POD_NAME" \
+  --image=docker.io/library/alpine:latest \
+  --image-pull-policy=Always \
+  --profile=sysadmin \
+  "node/${NODE_NAME}"
