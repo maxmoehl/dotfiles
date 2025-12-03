@@ -1,5 +1,13 @@
-#!/bin/sh
+#!/bin/sh -e
 
+# Exit immediately if we're in a rebase, merge, or cherry-pick
+git rev-parse --quiet --verify REBASE_HEAD      > /dev/null && exit 0 || true
+git rev-parse --quiet --verify MERGE_HEAD       > /dev/null && exit 0 || true
+git rev-parse --quiet --verify CHERRY_PICK_HEAD > /dev/null && exit 0 || true
+
+# git-commit only prevents empty commits when the tree would be identical to the
+# previous one. This does not catch cases where the user amends a previous
+# commit and forgets to stage changes.
 if [ -z "$(git diff --staged --name-only)" ]; then
     echo "error: no changes staged for commit, aborting. (hint: bypass this check using '--no-verify')"
     exit 1
