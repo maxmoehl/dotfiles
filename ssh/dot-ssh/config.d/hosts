@@ -2,10 +2,8 @@ Host localhost
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
 
-Host node.int.moehl.eu
-  ForwardAgent yes
-
 Host *.int.moehl.eu
   User max
+  ForwardAgent yes
   RequestTTY yes
   RemoteCommand tmux -2u new -A -s main
