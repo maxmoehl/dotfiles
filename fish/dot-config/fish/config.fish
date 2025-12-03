@@ -31,3 +31,11 @@ else
     set -gx EDITOR vim
     abbr -a -- edit vim
 end
+
+# Disable system-wide functions I don't like.
+functions -e \
+    alias \
+    grep \
+    l \
+    la \
+    ll

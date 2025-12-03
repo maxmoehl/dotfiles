@@ -28,4 +28,4 @@ abbr -a -- p podman
 abbr -a -- pip 'python3 -m pip'
 abbr -a -- scp 'scp -o RemoteCommand=none'
 abbr -a -- venv 'python3 -m venv'
-abbr -a -- venvv 'python3 -m venv && source ./venv/bin/activate'
+abbr -a -- venvv 'python3 -m venv venv && source ./venv/bin/activate.fish'

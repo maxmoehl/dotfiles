@@ -1,5 +1,8 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export BAT_THEME:GitHub
+SETUVAR --export FZF_DEFAULT_COMMAND:rg\x20\x2d\x2dno\x2dignore\x20\x2d\x2dhidden\x20\x2d\x2dfiles\x20\x2d\x2dwith\x2dfilename
+SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dansi\x20\x2d\x2dreverse\x20\x2d\x2dpreview\x20\x27bat\x20\x2d\x2dcolor\x3dalways\x20\x7b1\x7d\x27
 SETUVAR --export LANG:en_US\x2eUTF\x2d8
 SETUVAR --export PAGER:less
 SETUVAR --export TIME_STYLE:long\x2diso
