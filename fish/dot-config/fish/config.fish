@@ -1,10 +1,16 @@
 #!/usr/bin/env fish
 
-# Ensure we can find tmux if it exists.
+# Ensure we can find all of our binaries.
 fish_add_path --global --move ~/.local/bin
 
-if status is-interactive && command -sq tmux && not set -q TMUX
-    exec tmux new-session -A -s main
+if status is-interactive
+    if command -q tmux && not set -q TMUX
+        exec tmux new-session -A -s main
+    end
+
+    if command -q atuin
+        atuin init fish --disable-up-arrow | source
+    end
 end
 
 set -gx XDG_CONFIG_HOME ~/.config
