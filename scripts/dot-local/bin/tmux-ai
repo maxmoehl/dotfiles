@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_PATH="$(realpath "$0")"
+CONFIG_FILE="${HOME}/.config/tmux-ai.conf"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+fi
+
+MODEL="${LITELLM_MODEL:-sonnet-45}"
+
+require_config() {
+    if [[ -z "${LITELLM_URL:-}" ]]; then
+        tmux display-message "Error: LITELLM_URL not set in ${CONFIG_FILE}"
+        exit 1
+    fi
+    if [[ -z "${LITELLM_API_KEY:-}" ]]; then
+        tmux display-message "Error: LITELLM_API_KEY not set in ${CONFIG_FILE}"
+        exit 1
+    fi
+}
+
+call_llm() {
+    local system_prompt="$1"
+    local user_prompt="$2"
+
+    local response
+    response=$(curl -s -f "${LITELLM_URL}/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${LITELLM_API_KEY}" \
+        -d "$(jq -cn \
+            --arg model "$MODEL" \
+            --arg system "$system_prompt" \
+            --arg user "$user_prompt" \
+            '{
+                model: $model,
+                temperature: 0,
+                messages: [
+                    {role: "system", content: $system},
+                    {role: "user", content: $user}
+                ]
+            }')" 2>/dev/null)
+
+    if [[ -z "$response" ]]; then
+        tmux display-message "Error: Empty response from API"
+        exit 1
+    fi
+
+    local content
+    content=$(echo "$response" | jq -r '.choices[0].message.content')
+
+    if [[ -z "$content" || "$content" == "null" ]]; then
+        tmux display-message "Error: Could not parse response"
+        exit 1
+    fi
+
+    printf '%s' "$content"
+}
+
+show_help() {
+    cat <<'EOF'
+tmux-ai - AI-powered terminal assistant for tmux
+
+USAGE:
+    tmux-ai <command> [args]
+
+COMMANDS:
+    prompt              Open interactive prompt to generate a shell command
+    command <query>     Generate a shell command from query (used by prompt)
+    explain             Explain piped terminal output in a popup
+    help                Show this help message
+
+CONFIGURATION:
+    Create ~/.config/tmux-ai.conf with:
+
+        LITELLM_URL="http://localhost:4000"
+        LITELLM_API_KEY="sk-..."
+        LITELLM_MODEL="sonnet-45"    # optional
+
+TMUX BINDINGS:
+    Add to your tmux.conf:
+
+        # Prefix + a: Open AI command prompt
+        bind-key a run-shell "tmux-ai prompt"
+
+        # In copy-mode-vi, press 'e' to explain selection
+        bind-key -T copy-mode-vi e send-keys -X copy-pipe-no-clear "tmux-ai explain"
+
+        # For copy-mode (emacs style):
+        bind-key -T copy-mode e send-keys -X copy-pipe-no-clear "tmux-ai explain"
+EOF
+}
+
+case "${1:-}" in
+    prompt)
+        tmux command-prompt -p "Prompt:" "run-shell '\"${SCRIPT_PATH}\" command \"%%\"'"
+        ;;
+    command)
+        require_config
+        result=$(call_llm \
+            "You are a command generator. Output ONLY the requested shell command. No explanations, no markdown code blocks, no backticks, no commentary. Just the raw command that can be executed directly." \
+            "$2")
+        tmux send-keys -l "$result"
+        ;;
+    explain)
+        require_config
+        selection=$(cat)
+        if [[ -z "$selection" ]]; then
+            tmux display-message "Error: No selection provided"
+            exit 1
+        fi
+        explanation=$(call_llm \
+            "Explain the following terminal output. Be concise but thorough. Quote relevant snippets from the output when referencing them." \
+            "$selection")
+        tmpfile=$(mktemp)
+        printf '%s\n' "$explanation" > "$tmpfile"
+        tmux popup -w 80% -h 80% -E "less -R '$tmpfile'; rm -f '$tmpfile'"
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        show_help >&2
+        exit 1
+        ;;
+esac
