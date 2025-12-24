@@ -8,4 +8,4 @@ Host *
   ControlPersist yes
   ExitOnForwardFailure yes
   GatewayPorts no
-  ConnectTimeout 1
+  ConnectTimeout 2
