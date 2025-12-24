@@ -113,12 +113,10 @@ case "${1:-}" in
             tmux display-message "Error: No selection provided"
             exit 1
         fi
-        explanation=$(call_llm \
-            "Explain the following terminal output. Be concise but thorough. Quote relevant snippets from the output when referencing them." \
-            "$selection")
         tmpfile=$(mktemp)
-        printf '%s\n' "$explanation" > "$tmpfile"
-        tmux popup -w 80% -h 80% -E "less -R '$tmpfile'; rm -f '$tmpfile'"
+        call_llm "Explain the following terminal output. Be concise but thorough. Quote relevant snippets from the output when referencing them." \
+            "$selection" > "$tmpfile"
+        tmux popup -w 40% -h 80% -E "less -R; rm -f '$tmpfile'"
         ;;
     help|--help|-h)
         show_help
