@@ -106,10 +106,8 @@ end
 load_config "$HOME/.config/litellm.conf"
 
 set -l system_prompt "You are a helpful assistant. Your output goes directly" \
-    "to a terminal without any markdown rendering or syntax highlighting." \
-    "Keep responses plain text, avoid code fences and markdown formatting." \
-    "Indent code to separate it from the rest of the text. Be brief," \
-    "scrolling is tedious and terminals have limited height."
+    "to a terminal with light markdown rendering and syntax highlighting." \
+    "Be brief, scrolling is tedious and terminals have limited height."
 set -g messages (format_message 'system' (string join " " $system_prompt))
 
 while true
@@ -146,6 +144,6 @@ while true
     set -a messages (format_message "assistant" "$content")
 
     echo ""
-    echo "$content"
+    echo "$content" | md
     echo ""
 end
