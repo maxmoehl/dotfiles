@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_PATH="$(realpath "$0")"
-CONFIG_FILE="${HOME}/.config/tmux-ai.conf"
+CONFIG_FILE="${HOME}/.config/litellm.conf"
 
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
@@ -92,6 +92,8 @@ TMUX BINDINGS:
         bind-key -T copy-mode e send-keys -X copy-pipe-no-clear "tmux-ai explain"
 EOF
 }
+
+# TODO: allow the user to supply a prompt / question in addition to the selected text
 
 case "${1:-}" in
     prompt)
