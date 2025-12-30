@@ -1,0 +1,37 @@
+#!/bin/sh -e
+
+# Usage: go-bootstrap
+#
+# Setup a go toolchain for this user by downloading the latest release and then
+# installing it to $GOBIN via go.
+
+if command -v go > /dev/null 2> /dev/null; then
+  echo "go command already installed, not doing anything"
+  exit 0
+fi
+
+if ! command -v curl > /dev/null 2> /dev/null; then
+  echo "error: curl not installed"
+  exit 1
+fi
+
+if test -z "${GOBIN}"; then
+  echo '$GOBIN not set'
+  exit 1
+fi
+
+tmp_dir="$(mktemp -d)"
+go_version="$(curl -fsSL https://go.dev/VERSION?m=text | head -n1)"
+
+echo "Downloading ${go_version} to ${tmp_dir}..."
+curl -fLo "${tmp_dir}/go.tar.gz" "https://go.dev/dl/${go_version}.linux-amd64.tar.gz"
+
+echo "Extracing archive..."
+tar -C "${tmp_dir}" -xf "${tmp_dir}/go.tar.gz"
+
+echo "Installing ${go_version}..."
+"${tmp_dir}/go/bin/go" install "golang.org/dl/${go_version}@latest"
+ln -s "${GOBIN}/${go_version}" "${GOBIN}/go"
+"${GOBIN}/go" download
+
+echo "Done, you can now use 'go'"
