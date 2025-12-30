@@ -1,59 +1,50 @@
 #!/usr/bin/env fish
 
+set -g ConfigPath "$HOME/.config/litellm.json"
+set -g DefaultCurlOpts --no-progress-meter --fail-with-body --location
+
 function log_error -a msg
     echo "error: $msg" >&2
 end
 
-function load_config -a config_file
-    if test -f "$config_file"
-        while read -l line
-            set -l line (string trim "$line")
-            if test -z "$line"; or string match -q '#*' "$line"
-                continue
-            end
-            set -l parts (string split -m 1 '=' "$line")
-            if test (count $parts) -eq 2
-                set -l key (string trim $parts[1])
-                set -l val (string trim $parts[2])
-                set val (string trim -c '"' $val)
-                set val (string trim -c "'" $val)
-                switch $key
-                    case LITELLM_API_KEY
-                        set -g ApiKey $val
-                    case LITELLM_URL
-                        set -g ApiUrl $val
-                    case LITELLM_MODEL
-                        set -g Model $val
-                end
-            end
-        end <"$config_file"
+function load_config
+    if not test -f $ConfigPath
+        return
+    end
+
+    set -g ApiUrl (jq -r '.url // empty' <$ConfigPath)
+    set -g ApiKey (jq -r '.key // empty' <$ConfigPath)
+
+    set -l conf_model (jq -r '.model // empty' <$ConfigPath)
+    if test -n "$conf_model"
+        set -g Model $conf_model
     end
 end
 
 function vcurl
-    argparse --name curl --strict-longopts 'data=' 'header=' -- $argv
-    set -l opts $argv $argv_opts --silent --fail --location
-
     if not set -q Verbose
-        curl --show-error $opts 2>&1
+        curl $DefaultCurlOpts $argv 2>&1
         return $status
     end
+
+    argparse --name vcurl --strict-longopts 'data=' 'header=' -- $argv
 
     set -l method GET
     if set -q _flag_data
         set method POST
     end
 
-    set -l tempdir (mktemp -d)
-    set -l stdout_file $tempdir/out
-    set -l stderr_file $tempdir/err
+    set -l tmpdir (mktemp -d)
+    set -l stdout_file $tmpdir/out
+    set -l stderr_file $tmpdir/err
 
     echo "[REQUEST] $method $argv[1]" 1>&2
     if set -q _flag_data
         echo "$_flag_data" | jq 1>&2
+    else
     end
 
-    curl --write-out '%{stderr}%{json}' $opts >$stdout_file 2>$stderr_file
+    curl --write-out '%{stderr}%{json}' $DefaultCurlOpts $argv $argv_opts $opts >$stdout_file 2>$stderr_file
 
     set -l response_code (jq -r '.response_code' <$stderr_file)
     set -l content_type (jq -r '.content_type' <$stderr_file)
@@ -62,8 +53,8 @@ function vcurl
 
     echo "[RESPONSE] $response_code" >&2
     if test "$error_msg" != null
-        echo >&2 foobar
         echo "$error_msg"
+        cat "$stdout_file"
         return 1
     else
         switch $content_type
@@ -122,13 +113,13 @@ USAGE
 
 OPTIONS
     -c, --continue
-        Continue the last converstaion.
+        Continue the last conversation.
 
     -h, --help
         Show this help page.
 
     -m, --model <model>
-        Use the given model, overrides environment varibale and config file
+        Use the given model, overrides environment variable and config file
         properties. See CONFIGURATION for more information.
 
     -r, --resume <name>
@@ -138,9 +129,13 @@ OPTIONS
         Print verbose output like all requests and responses as they are sent
         to the API.
 
-INTERACTIVE COMMANDS
-    In the REPL any messages that starts with a '.' is considered a command.
-    These commands are available:
+INTERACTIVE USE
+    Besides typing text and the most basic navigation and text editing you can
+    attach files by using @/file/path. The contents of the file will be appended
+    to the end of your prompt for the LLM to inspect.
+
+    In the REPL any messages that starts with a '.' is considered a command. The
+    available commands are:
 
     .help
         Show a list of available commands.
@@ -169,11 +164,12 @@ TOOLS
         Retrieve the plain-text version of  the given RFC from rfc-editor.org.
 
 CONFIGURATION
-    Create ~/.config/litellm.conf with:
+    Create ~/.config/litellm.json with:
 
-        LITELLM_URL="http://localhost:4000"
-        LITELLM_API_KEY="sk-..."
-        LITELLM_MODEL="sonnet-45"
+        {
+          "url": "https://llm.example.com",
+          "key": "sk-..."
+        }
 '
 end
 
@@ -189,7 +185,7 @@ function print_startup
 end
 
 function print_tool_call -a func args
-    printf "\nTool call: %s(%s)\n\n" "$func" "$(echo "$args" | jq -r 'to_entries | map("\(.key)=\(.value)") | join(" ")')"
+    printf "\nTool call: %s(%s)\n" "$func" "$(echo "$args" | jq -r 'to_entries | map("\(.key)=\(.value)") | join(" ")')"
 end
 
 function print_assistant -a content
@@ -197,18 +193,42 @@ function print_assistant -a content
 end
 
 function print_user -a content
-    printf '> %s\n' "$content"
+    printf '> %s\n' "$(string split -f1 '@@@FILES@@@' "$content")"
 end
 
 ######################
 # MESSAGE FORMATTING #
 ######################
 
-function append_message -a role content
+function append_user_message -a content
+    begin
+        printf "%s\n" "$content"
+        printf "@@@FILES@@@\n"
+
+        for path in (string match -gar '@([a-zA-Z0-9/_.-]+)' $content)
+            if not test -f $path
+                echo "warning: file not found: $path, skipping" >&2
+                continue
+            end
+
+            echo "@$path"
+            cat $path
+            printf "\n\n"
+        end
+    end | jq -Rscn >>$Session \
+        '{role: "user", content: input}'
+end
+
+function append_assistant_message -a content
     jq -cn >>$Session \
-        --arg role "$role" \
         --arg content "$content" \
-        '{role: $role, content: $content}'
+        '{role: "assistant", content: $content}'
+end
+
+function append_system_message -a content
+    jq -cn >>$Session \
+        --arg content "$content" \
+        '{role: "system", content: $content}'
 end
 
 function append_tool_call -a tool_call
@@ -292,8 +312,8 @@ function tool -a tool_name arguments
 end
 
 function tool_man -a page
-    set -l content "$(man $page)"
-    or set -l content "$(vcurl "https://man.archlinux.org/man/$page.txt")"
+    man $page 2>/dev/null
+    or vcurl "https://man.archlinux.org/man/$page.txt"
 end
 
 function tool_rfc -a number
@@ -303,8 +323,6 @@ end
 ###############
 # MAIN SCRIPT #
 ###############
-
-# TODO: resume & continue with persistent sessions.
 
 argparse --strict-longopts \
     --name chat.fish \
@@ -316,7 +334,7 @@ argparse --strict-longopts \
     v/verbose \
     -- $argv; or exit 1
 
-load_config "$HOME/.config/litellm.conf"
+load_config
 
 set -q _flag_verbose; and set -g Verbose true
 set -q _flag_model; and set -g Model $_flag_model
@@ -393,23 +411,24 @@ set -g Tools (jq -cn '[{
     }
 }]')
 
+set -g SystemPrompt 'You are a helpful assistant. Your
+output goes directly to a terminal with light markdown rendering and syntax
+highlighting. Be brief, scrolling is tedious and terminals have limited height.
+The user can attach files using @ those files will be printed at the end of the
+message and separated from the rest of the content by the @@@FILES@@@ marker.'
+
 if not test -f $Session
     # Start of a new session, ensure system prompt is persisted.
-    append_message system (string join ' ' "You are a helpful assistant. Your" \
-        "output goes directly to a terminal with light markdown rendering and" \
-        "syntax highlighting. Be brief, scrolling is tedious and terminals have" \
-        "limited height.")
+    append_system_message "$SystemPrompt"
 else
     # Resuming an existing session, replay the previous messages.
     while read -l line
-        set -l role (echo $line | jq -r '.role')
-
-        switch $role
+        switch (echo $line | jq -r '.role')
             case user
                 print_user "$(echo "$line" | jq -r '.content')"
             case assistant
                 set -l content "$(echo "$line" | jq -r '.content // empty')"
-                set -l tool_call (echo "$response" | jq -c '.tool_calls[0] // empty')
+                set -l tool_call (echo "$line" | jq -c '.tool_calls[0] // empty')
 
                 if test -n "$content"
                     print_assistant "$content"
@@ -440,7 +459,7 @@ while true
             continue
         end
 
-        append_message user "$user_input"
+        append_user_message "$user_input"
     end
 
     set -l payload (jq -cn \
@@ -450,7 +469,7 @@ while true
         '{model: $model, tools: $tools, messages: $messages}')
 
     set -l response (litellm "/v1/chat/completions" $payload); or begin
-        log_error "failed to retrieve response"
+        log_error "failed to retrieve response: $response"
         exit 1
     end
 
@@ -458,7 +477,7 @@ while true
     set -l tool_call (echo "$response" | jq -c '.choices[0].message.tool_calls[0] // empty')
 
     if test -n "$content"
-        append_message assistant "$content"
+        append_assistant_message "$content"
         print_assistant "$content"
     else if test -n "$tool_call"
         set -l id (echo "$tool_call" | jq -r '.id')
