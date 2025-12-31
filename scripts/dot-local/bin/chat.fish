@@ -1,29 +1,99 @@
 #!/usr/bin/env fish
 
-set -g ConfigPath "$HOME/.config/litellm.json"
-set -g DefaultCurlOpts --no-progress-meter --fail-with-body --location
+#############
+# CONSTANTS #
+#############
+
+function ConstConfigPath
+    echo "$HOME/.config/litellm.json"
+end
+
+function ConstSessionDir
+    echo "$HOME/.local/share/chat.fish"
+end
+
+function ConstDefaultModel
+    echo sonnet-45
+end
+
+function ConstDefaultCurlOpts
+    echo --no-progress-meter
+    echo --fail-with-body
+    echo --location
+end
+
+function ConstDefaultSystemPrompt
+    echo 'You are a helpful assistant. Your output goes directly to a terminal
+with light markdown rendering and syntax highlighting. Be brief, scrolling is
+tedious and terminals have limited height. The user can attach files using @
+those files will be printed at the end of the message and separated from the
+rest of the content by the @@@FILES@@@ marker.'
+end
+
+function ConstTools
+    jq -cn '[{
+        "type": "function",
+        "function": {
+            "name": "man",
+            "description": "Retrieve contents of a manual page.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "string",
+                        "description": "Page that should be retrieved. Examples: curl, curl.1, man"
+                    }
+                },
+                "required": ["page"]
+            }
+        }
+    }, {
+        "type": "function",
+        "function": {
+            "name": "rfc",
+            "description": "Retrieve contents of a RFC.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer",
+                        "description": "Number of the RFC to retrieve."
+                    }
+                },
+                "required": ["number"]
+            }
+        }
+    }]'
+end
+
+###########
+# GLOBALS #
+###########
+
+set -g Model (ConstDefaultModel)
+set -g ApiUrl
+set -g ApiKey
+
+###########
+# HELPERS #
+###########
 
 function log_error -a msg
     echo "error: $msg" >&2
 end
 
-function load_config
-    if not test -f $ConfigPath
-        return
-    end
-
-    set -g ApiUrl (jq -r '.url // empty' <$ConfigPath)
-    set -g ApiKey (jq -r '.key // empty' <$ConfigPath)
-
-    set -l conf_model (jq -r '.model // empty' <$ConfigPath)
-    if test -n "$conf_model"
-        set -g Model $conf_model
+function log_fatal -a msg code
+    echo "fatal error: $msg" >&2
+    if test -n "$code"
+        exit $code
+    else
+        exit 1
     end
 end
 
 function vcurl
     if not set -q Verbose
-        curl $DefaultCurlOpts $argv 2>&1
+        curl (ConstDefaultCurlOpts) $argv 2>&1
         return $status
     end
 
@@ -44,7 +114,7 @@ function vcurl
     else
     end
 
-    curl --write-out '%{stderr}%{json}' $DefaultCurlOpts $argv $argv_opts $opts >$stdout_file 2>$stderr_file
+    curl --write-out '%{stderr}%{json}' (ConstDefaultCurlOpts) $argv $argv_opts $opts >$stdout_file 2>$stderr_file
 
     set -l response_code (jq -r '.response_code' <$stderr_file)
     set -l content_type (jq -r '.content_type' <$stderr_file)
@@ -101,12 +171,12 @@ function generate_session_name
     echo "$(random choice $adjectives)_$(random choice $names)"
 end
 
-#####################
-# OUTPUT FORMATTING #
-#####################
+############
+# PRINTING #
+############
 
 function print_help
-    echo 'chat.fish - Minimal REPL to chat with LLMs
+    echo "chat.fish - Minimal REPL to chat with LLMs
 
 USAGE
     chat.fish [options] [args]
@@ -119,11 +189,19 @@ OPTIONS
         Show this help page.
 
     -m, --model <model>
-        Use the given model, overrides environment variable and config file
-        properties. See CONFIGURATION for more information.
+        Select a model. Defaults to $(ConstDefaultModel).
 
     -r, --resume <name>
         Continue a named converstaion.
+
+    -s, --system <message>
+        Overwrite the default system prompt. Can only be set once, the last
+        value will be used. Cannot be combined with --resume or --continue.
+
+    -u, --user <message>
+        Set the first user message, the message will be immediatly sent to the
+        model and after the response has been received the conversation
+        continues as usual. Cannot be combined with --resume or --continue.
 
     -v, --verbose
         Print verbose output like all requests and responses as they are sent
@@ -167,20 +245,20 @@ CONFIGURATION
     Create ~/.config/litellm.json with:
 
         {
-          "url": "https://llm.example.com",
-          "key": "sk-..."
+          \"url\": \"https://llm.example.com\",
+          \"key\": \"sk-...\"
         }
-'
+"
 end
 
-function print_startup
+function print_startup -a model session
     echo "
   ┌─────────────────────┐
   │ ><>  chat.fish  <>< │
   └─────────────────────┘
 
-  Model:   $Model
-  Session: $(basename -s '.jsonl' $Session)
+  Model:   $model
+  Session: $(basename -s '.jsonl' $session)
 "
 end
 
@@ -200,12 +278,17 @@ end
 # MESSAGE FORMATTING #
 ######################
 
-function append_user_message -a content
+function format_user_message -a content
     begin
         printf "%s\n" "$content"
-        printf "@@@FILES@@@\n"
 
-        for path in (string match -gar '@([a-zA-Z0-9/_.-]+)' $content)
+        set -l paths (string match -gar '@([a-zA-Z0-9/_.-]+)' $content)
+
+        if test (count $paths) -gt 0
+            printf "@@@FILES@@@\n"
+        end
+
+        for path in $paths
             if not test -f $path
                 echo "warning: file not found: $path, skipping" >&2
                 continue
@@ -215,30 +298,30 @@ function append_user_message -a content
             cat $path
             printf "\n\n"
         end
-    end | jq -Rscn >>$Session \
+    end | jq -Rscn \
         '{role: "user", content: input}'
 end
 
-function append_assistant_message -a content
-    jq -cn >>$Session \
+function format_assistant_message -a content
+    jq -cn \
         --arg content "$content" \
         '{role: "assistant", content: $content}'
 end
 
-function append_system_message -a content
-    jq -cn >>$Session \
+function format_system_message -a content
+    jq -cn \
         --arg content "$content" \
         '{role: "system", content: $content}'
 end
 
-function append_tool_call -a tool_call
-    jq -cn >>$Session \
+function format_tool_call -a tool_call
+    jq -cn \
         --argjson tool_call "$tool_call" \
         '{role: "assistant", tool_calls: [$tool_call]}'
 end
 
-function append_tool_result -a id func content
-    jq -cn >>$Session \
+function format_tool_result -a id func content
+    jq -cn \
         --arg call_id "$id" \
         --arg name "$func" \
         --arg content "$content" \
@@ -324,104 +407,10 @@ end
 # MAIN SCRIPT #
 ###############
 
-argparse --strict-longopts \
-    --name chat.fish \
-    --max-args 0 \
-    c/continue \
-    h/help \
-    'm/model=' \
-    'r/resume=' \
-    v/verbose \
-    -- $argv; or exit 1
+function mode_interactive -a session skip_prompt
+    print_startup $Model $session
 
-load_config
-
-set -q _flag_verbose; and set -g Verbose true
-set -q _flag_model; and set -g Model $_flag_model
-
-set -q -g Model; or set -g Model sonnet-45
-
-if set -q _flag_help
-    print_help
-    exit
-end
-
-set -g SessionDir "$HOME/.local/share/chat.fish"
-mkdir -p $SessionDir
-
-if set -q _flag_continue
-    set -g Session "$SessionDir/$(ls -t $SessionDir | head -n1)"
-    if string match -qv 0 $pipestatus
-        log_error "failed to retrieve latest conversation"
-        exit 1
-    end
-else if set -q _flag_resume
-    set -g Session "$SessionDir/$_flag_resume.jsonl"
-else
-    set -g Session "$SessionDir/$(generate_session_name).jsonl"
-    if test -f $Session
-        log_error "randomly generate session already exists, please try again :)"
-        exit 1
-    end
-end
-
-if not set -q Session
-    log_error "unable to determine session"
-    exit 1
-end
-
-if test -z "$ApiUrl"; or test -z "$ApiKey"
-    log_error "LITELLM_URL and LITELLM_API_KEY must be set"
-    exit 1
-end
-
-print_startup
-
-set -g Tools (jq -cn '[{
-    "type": "function",
-    "function": {
-        "name": "man",
-        "description": "Retrieve contents of a manual page.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "string",
-                    "description": "Page that should be retrieved. Examples: curl, curl.1, man"
-                }
-            },
-            "required": ["page"]
-        }
-    }
-}, {
-    "type": "function",
-    "function": {
-        "name": "rfc",
-        "description": "Retrieve contents of a RFC.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "number": {
-                    "type": "integer",
-                    "description": "Number of the RFC to retrieve."
-                }
-            },
-            "required": ["number"]
-        }
-    }
-}]')
-
-set -g SystemPrompt 'You are a helpful assistant. Your
-output goes directly to a terminal with light markdown rendering and syntax
-highlighting. Be brief, scrolling is tedious and terminals have limited height.
-The user can attach files using @ those files will be printed at the end of the
-message and separated from the rest of the content by the @@@FILES@@@ marker.'
-
-if not test -f $Session
-    # Start of a new session, ensure system prompt is persisted.
-    append_system_message "$SystemPrompt"
-else
-    # Resuming an existing session, replay the previous messages.
+    # Replay previous messages if there are any.
     while read -l line
         switch (echo $line | jq -r '.role')
             case user
@@ -438,63 +427,143 @@ else
                         "$(echo "$tool_call" | jq -r '.function.arguments')"
                 end
         end
-        # case tool is ignored, that's only for the assistant to see.
-    end <$Session
-end
+    end <$session
 
-while true
-    if set -q skip_prompt
-        set -e -g skip_prompt
-    else
-        read -l -P "> " user_input
-        or break
+    # REPL
+    while true
+        if test $skip_prompt = true
+            set skip_prompt false
+        else
+            read -l -P "> " user_input
+            or break
 
-        set user_input (string trim "$user_input")
-        if test -z "$user_input"
-            continue
+            set -l user_input (string trim "$user_input")
+            if test -z "$user_input"
+                continue
+            end
+
+            if string match -q '.*' -- "$user_input"
+                cmd (string split ' ' "$user_input")
+                continue
+            end
+
+            format_user_message "$user_input" >>$session
         end
 
-        if string match -q '.*' -- "$user_input"
-            cmd (string split ' ' "$user_input")
-            continue
+        set -l payload (jq -cn \
+            --arg model $Model \
+            --argjson tools (ConstTools) \
+            --slurpfile messages $session \
+            '{model: $model, tools: $tools, messages: $messages}')
+
+        set -l response (litellm "/v1/chat/completions" $payload); or begin
+            log_fatal "failed to retrieve response: $response"
         end
 
-        append_user_message "$user_input"
-    end
+        set -l content "$(echo "$response" | jq -r '.choices[0].message.content // empty')"
+        set -l tool_call (echo "$response" | jq -c '.choices[0].message.tool_calls[0] // empty')
 
-    set -l payload (jq -cn \
-        --arg model "$Model" \
-        --argjson tools "$Tools" \
-        --slurpfile messages $Session \
-        '{model: $model, tools: $tools, messages: $messages}')
+        if test -n "$content"
+            format_assistant_message "$content" >>$session
+            print_assistant "$content"
+        else if test -n "$tool_call"
+            set -l id (echo "$tool_call" | jq -r '.id')
+            set -l func (echo "$tool_call" | jq -r '.function.name')
+            set -l args (echo "$tool_call" | jq -r '.function.arguments')
 
-    set -l response (litellm "/v1/chat/completions" $payload); or begin
-        log_error "failed to retrieve response: $response"
-        exit 1
-    end
+            # TODO: error handling?
+            set -l content "$(tool $func $args)"
 
-    set -l content "$(echo "$response" | jq -r '.choices[0].message.content // empty')"
-    set -l tool_call (echo "$response" | jq -c '.choices[0].message.tool_calls[0] // empty')
+            format_tool_call "$tool_call" >>$session
+            format_tool_result "$id" "$func" "$content" >>$session
 
-    if test -n "$content"
-        append_assistant_message "$content"
-        print_assistant "$content"
-    else if test -n "$tool_call"
-        set -l id (echo "$tool_call" | jq -r '.id')
-        set -l func (echo "$tool_call" | jq -r '.function.name')
-        set -l args (echo "$tool_call" | jq -r '.function.arguments')
+            print_tool_call "$func" "$args"
 
-        # TODO: error handling?
-        set -l content "$(tool $func $args)"
-
-        append_tool_call "$tool_call"
-        append_tool_result "$id" "$func" "$content"
-
-        print_tool_call "$func" "$args"
-
-        set -g skip_prompt true
-    else
-        log_error "got empty response from model"
-        exit 1
+            set skip_prompt true
+        else
+            log_fatal "got empty response from model"
+        end
     end
 end
+
+function main
+    argparse --strict-longopts \
+        --name chat.fish \
+        --max-args 0 \
+        --exclusive continue,resume,user \
+        --exclusive continue,resume,system \
+        (fish_opt -s c -l continue) \
+        (fish_opt -s h -l help) \
+        (fish_opt -s m -l model --required-val) \
+        (fish_opt -s r -l resume --required-val) \
+        (fish_opt -s s -l system --required-val) \
+        (fish_opt -s u -l user --required-val) \
+        (fish_opt -s v -l verbose) \
+        -- $argv; or exit 1
+
+    if set -q _flag_verbose
+        set -g Verbose true
+    end
+
+    if set -q _flag_help
+        print_help
+        exit
+    end
+
+    if not test -f (ConstConfigPath)
+        log_fatal "config file $(ConstConfigPath) does not exist"
+    end
+
+    set -g ApiUrl (jq -r '.url // empty' <(ConstConfigPath))
+    set -g ApiKey (jq -r '.key // empty' <(ConstConfigPath))
+
+    if test -z "$ApiUrl"; or test -z "$ApiKey"
+        log_fatal "API URL and API key must be set"
+    end
+
+    if set -q _flag_model
+        set -g Model $_flag_model
+    end
+
+    set -f system_prompt "$(ConstDefaultSystemPrompt)"
+    if set -q _flag_system
+        set -f system_prompt "$_flag_system"
+    end
+
+    set -f session
+    if set -q _flag_continue
+        set session "$(ConstSessionDir)/$(ls -t (ConstSessionDir) | head -n1)"
+        if string match -qv 0 $pipestatus
+            log_fatal "failed to retrieve latest conversation"
+        else if test -z "$session"
+            log_fatal "no session found to continue"
+        end
+    else if set -q _flag_resume
+        set session "$(ConstSessionDir)/$_flag_resume.jsonl"
+        if not test -f $session
+            log_fatal "session $_flag_resume does not exit"
+        end
+    else
+        set session "$(ConstSessionDir)/$(generate_session_name).jsonl"
+        if test -f $session
+            log_fatal "randomly generate session already exists, please try again :)"
+        end
+    end
+
+    if not set -q session
+        log_fatal "unable to determine session"
+    end
+
+    if not test -f $session
+        format_system_message "$system_prompt" >>$session
+    end
+
+    if set -q _flag_user
+        format_user_message "$_flag_user"
+        mode_interactive $session true
+    else
+        mode_interactive $session false
+    end
+end
+
+main $argv
