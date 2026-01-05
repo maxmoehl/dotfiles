@@ -5,11 +5,19 @@
 #############
 
 function ConstConfigPath
-    echo "$HOME/.config/litellm.json"
+    if set -q XDG_CONFIG_HOME
+        echo $XDG_CONFIG_HOME/litellm.json
+    else
+        echo ~/.config/litellm.json
+    end
 end
 
 function ConstSessionDir
-    echo "$HOME/.local/share/chat.fish"
+    if set -q XDG_DATA_HOME
+        echo $XDG_DATA_HOME/chat.fish
+    else
+        echo ~/.local/share/chat.fish
+    end
 end
 
 function ConstDefaultModel
@@ -32,6 +40,22 @@ end
 
 function ConstTools
     jq -cn '[{
+        "type": "function",
+        "function": {
+            "name": "curl",
+            "description": "Retrieve the contentes of a website.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "URL to retrieve, no options can be passed to cURL."
+                    }
+                },
+                "required": ["url"]
+            }
+        }
+    }, {
         "type": "function",
         "function": {
             "name": "man",
@@ -171,6 +195,16 @@ function generate_session_name
     echo "$(random choice $adjectives)_$(random choice $names)"
 end
 
+function _md
+    if command -q md
+        md
+    else if command -q bat
+        bat --language markdown --paging never
+    else
+        cat
+    end
+end
+
 ############
 # PRINTING #
 ############
@@ -239,7 +273,11 @@ TOOLS
         Arch Linux at man.archlinux.org.
 
     rfc <number>
-        Retrieve the plain-text version of  the given RFC from rfc-editor.org.
+        Retrieve the plain-text version of the given RFC from rfc-editor.org.
+
+    curl <url>
+        Retrieve the contents of a website. Will prompt the user to allow / deny
+        the tool call.
 
 CONFIGURATION
     Create ~/.config/litellm.json with:
@@ -267,7 +305,7 @@ function print_tool_call -a func args
 end
 
 function print_assistant -a content
-    printf '%s' "$content" | md
+    printf '%s' "$content" | _md
 end
 
 function print_user -a content
@@ -384,6 +422,8 @@ end
 
 function tool -a tool_name arguments
     switch $tool_name
+        case curl
+            tool_curl (echo $arguments | jq -r '.url')
         case man
             tool_man (echo $arguments | jq -r '.page')
         case rfc
@@ -391,6 +431,15 @@ function tool -a tool_name arguments
         case '*'
             echo "unknown tool $tool_name" >&2
             return 1
+    end
+end
+
+function tool_curl -a url
+    read -l response -p "printf 'Allow tool call? [\e[4mY\e[24mes|\e[4mn\e[24mo] '"
+    if string match -r '^(y|Y)' $response >/dev/null
+        vcurl $url
+    else
+        echo "user denied tool use"
     end
 end
 
@@ -471,13 +520,13 @@ function mode_interactive -a session skip_prompt
             set -l func (echo "$tool_call" | jq -r '.function.name')
             set -l args (echo "$tool_call" | jq -r '.function.arguments')
 
+            print_tool_call "$func" "$args"
+
             # TODO: error handling?
             set -l content "$(tool $func $args)"
 
             format_tool_call "$tool_call" >>$session
             format_tool_result "$id" "$func" "$content" >>$session
-
-            print_tool_call "$func" "$args"
 
             set skip_prompt true
         else
