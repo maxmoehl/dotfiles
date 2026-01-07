@@ -33,9 +33,13 @@ end
 function ConstDefaultSystemPrompt
     echo 'You are a helpful assistant. Your output goes directly to a terminal
 with light markdown rendering and syntax highlighting. Be brief, scrolling is
-tedious and terminals have limited height. The user can attach files using @
-those files will be printed at the end of the message and separated from the
-rest of the content by the @@@FILES@@@ marker.'
+tedious and terminals have limited height.'
+end
+
+function ConstDefaultFilesNote
+    printf '\n\nThe user can attach files using @ those files will be printed at
+the end of the message and separated from the rest of the content by the
+@@@FILES@@@ marker.'
 end
 
 function ConstTools
@@ -246,7 +250,19 @@ INTERACTIVE USE
     attach files by using @/file/path. The contents of the file will be appended
     to the end of your prompt for the LLM to inspect.
 
-    In the REPL any messages that starts with a '.' is considered a command. The
+    When constructing longer prompts that need line-breaks it is recommended to
+    do so in an editor. Pressing ⌥ + e / Alt + e will open the editor of your
+    choice. Alternatively, ⌥ + Enter / Alt + Enter will add a new-line without
+    sending the prompt.
+
+    Output form the model will be markdown formatted most of the time. The
+    script will try to find a tool to properly render it to the terminal. In
+    order of preference those are:
+    * https://go.moehl.dev/md
+    * https://github.com/sharkdp/bat
+    * cat
+
+    In the REPL any message that starts with a '.' is considered a command. The
     available commands are:
 
     .help
@@ -267,6 +283,10 @@ TOOLS
     A number of tools are registered in the conversation to allow the model to
     retrieve technical information and ensure accurate responses.
 
+    curl <url>
+        Retrieve the contents of a website. Will prompt the user to allow / deny
+        the tool call.
+
     man <page>
         Retrieve a plain-text version of the given manual page using the local
         man command. If no page was found it will try to retrieve a version from
@@ -274,10 +294,6 @@ TOOLS
 
     rfc <number>
         Retrieve the plain-text version of the given RFC from rfc-editor.org.
-
-    curl <url>
-        Retrieve the contents of a website. Will prompt the user to allow / deny
-        the tool call.
 
 CONFIGURATION
     Create ~/.config/litellm.json with:
@@ -290,13 +306,22 @@ CONFIGURATION
 end
 
 function print_startup -a model session
+    set -l renderer
+    if command -q md
+        set renderer md
+    else if command -q bat
+        set renderer md
+    else
+        set renderer md
+    end
     echo "
   ┌─────────────────────┐
   │ ><>  chat.fish  <>< │
   └─────────────────────┘
 
-  Model:   $model
-  Session: $(basename -s '.jsonl' $session)
+  Model:    $model
+  Session:  $(basename -s '.jsonl' $session)
+  Renderer: $renderer
 "
 end
 
@@ -435,7 +460,11 @@ function tool -a tool_name arguments
 end
 
 function tool_curl -a url
-    read -l response -p "printf 'Allow tool call? [\e[4mY\e[24mes|\e[4mn\e[24mo] '"
+    read \
+        --local \
+        --nchars 1 \
+        --prompt "printf 'Allow tool call? [\e[4my\e[24mes|\e[4mN\e[24mo] '" \
+        response
     if string match -r '^(y|Y)' $response >/dev/null
         vcurl $url
     else
@@ -538,7 +567,7 @@ end
 function main
     argparse --strict-longopts \
         --name chat.fish \
-        --max-args 0 \
+        --max-args 1 \
         --exclusive continue,resume,user \
         --exclusive continue,resume,system \
         (fish_opt -s c -l continue) \
@@ -570,14 +599,29 @@ function main
         log_fatal "API URL and API key must be set"
     end
 
+    # Hidden commands, used for completion.
+    if set -q argv[1]
+        switch $argv[1]
+            case list-models
+                litellm /v1/models | jq -r '.data[].id'
+            case list-sessions
+                ls (ConstSessionDir) | awk -F"." "{ print \$1 }"
+            case '*'
+                log_fatal "unknown command $argv[1]"
+        end
+        exit 0
+    end
+
     if set -q _flag_model
         set -g Model $_flag_model
     end
 
     set -f system_prompt "$(ConstDefaultSystemPrompt)"
     if set -q _flag_system
-        set -f system_prompt "$_flag_system"
+        set system_prompt "$_flag_system"
     end
+
+    set system_prompt "$system_prompt$(ConstDefaultFilesNote)"
 
     set -f session
     if set -q _flag_continue
@@ -608,7 +652,7 @@ function main
     end
 
     if set -q _flag_user
-        format_user_message "$_flag_user"
+        format_user_message "$_flag_user" >>$session
         mode_interactive $session true
     else
         mode_interactive $session false
