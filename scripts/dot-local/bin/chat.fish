@@ -541,10 +541,24 @@ function mode_interactive -a session skip_prompt
         set -l content "$(echo "$response" | jq -r '.choices[0].message.content // empty')"
         set -l tool_call (echo "$response" | jq -c '.choices[0].message.tool_calls[0] // empty')
 
+        # TODO: this doesn't work :(
+        set -l thought_sig (echo "$response" | jq -r '.choices[0].message.thinking_blocks[0].signature // empty')
+        if test -n "$thought_sig"
+            set tool_call (echo "$tool_call" | jq -c \
+                --arg sig $thought_sig \
+                '.id += "__thought__" + $sig')
+        end
+
+        if test -z "$content"; and test -z "$tool_call"
+            log_fatal "got empty response from model"
+        end
+
         if test -n "$content"
             format_assistant_message "$content" >>$session
             print_assistant "$content"
-        else if test -n "$tool_call"
+        end
+
+        if test -n "$tool_call"
             set -l id (echo "$tool_call" | jq -r '.id')
             set -l func (echo "$tool_call" | jq -r '.function.name')
             set -l args (echo "$tool_call" | jq -r '.function.arguments')
@@ -558,8 +572,6 @@ function mode_interactive -a session skip_prompt
             format_tool_result "$id" "$func" "$content" >>$session
 
             set skip_prompt true
-        else
-            log_fatal "got empty response from model"
         end
     end
 end
