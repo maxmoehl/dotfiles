@@ -4,7 +4,7 @@
 fish_add_path --global --move ~/.local/bin
 
 if status is-interactive
-    if command -q tmux && not set -q TMUX
+    if command -q tmux; and not set -q TMUX; and not set -q SSH_CONNECTION
         exec tmux new-session -A -s main
     end
 
