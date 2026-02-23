@@ -8,4 +8,3 @@ SETUVAR --export PAGER:less
 SETUVAR --export TIME_STYLE:long\x2diso
 SETUVAR __fish_initialized:4300
 SETUVAR fish_greeting:
-SETUVAR fish_key_bindings:fish_default_key_bindings

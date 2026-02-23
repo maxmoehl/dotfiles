@@ -1,5 +1,4 @@
 abbr -a -- abbrsave 'abbr | sort > ~/.config/fish/conf.d/abbr.fish'
-abbr -a -- claude 'npx --yes @anthropic-ai/claude-code@latest --permission-mode=plan'
 abbr -a -- cpr 'cp -r'
 abbr -a -- d docker
 abbr -a -- dc 'docker compose'
@@ -22,10 +21,11 @@ abbr -a -- gst 'git stash'
 abbr -a -- gsu 'git submodule update --recursive'
 abbr -a -- gsw 'git switch'
 abbr -a -- k kubectl
+abbr -a -- ka 'kubectl get -A'
+abbr -a -- kn 'kubectl -n'
 abbr -a -- l 'ls -lh'
 abbr -a -- ll 'ls -lha'
 abbr -a -- p podman
 abbr -a -- pip 'python3 -m pip'
-abbr -a -- scp 'scp -o RemoteCommand=none'
 abbr -a -- venv 'python3 -m venv'
 abbr -a -- venvv 'python3 -m venv venv && source ./venv/bin/activate.fish'
