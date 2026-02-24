@@ -48,3 +48,30 @@ These rules ensure clean, consistent code formatting and prevent unnecessary dif
 - **NEVER** exceed 3 levels of indentation
   - Use early returns, extract functions, or restructure logic to maintain shallow nesting
   - Deep nesting makes code harder to read and maintain
+
+## Perl-Specific Rules
+- **ALWAYS** use `use strict;` and `use warnings;` at the top of every script
+- **ALWAYS** use parentheses on function calls
+  - Preferred: `my @sorted = sort(@items);`
+  - Avoid: `my @sorted = sort @items;`
+- **NEVER** use postfix conditionals or loops
+  - Preferred: `if (!defined($val)) { return; }`
+  - Avoid: `return unless defined $val;`
+- **ALWAYS** use `STDERR->print(...)` for printing to STDERR
+  - Avoid: `print STDERR "...";`
+  - Avoid: `warn "...";` (when the intent is output, not a warning)
+- **ALWAYS** use explicit block forms for control structures
+  - Preferred: `if ($cond) { ... }`, `for my $item (@list) { ... }`
+  - Avoid: `... if $cond;`, `... for @list;`, `... while $cond;`
+- **NEVER** use implicit `$_` when a named variable is practical
+  - Preferred: `for my $line (@lines) { chomp($line); }`
+  - Avoid: `chomp for @lines;`
+- **ALWAYS** use `my` to declare variables in the smallest applicable scope
+- **PREFER** `//` (defined-or) over `||` when testing for definedness
+  - `my $val = $input // "default";`
+- **PREFER** three-argument `open` with lexical filehandles
+  - Preferred: `open(my $fh, '<', $path) or die("open $path: $!");`
+  - Avoid: `open(FH, $path);`
+- **NEVER** use string-eval (`eval "..."`) — use block-eval (`eval { ... }`) when needed
+- **PREFER** `die` with a meaningful message over bare `die`
+- **PREFER** snake_case for variable and subroutine names
