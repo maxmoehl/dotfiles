@@ -1,0 +1,27 @@
+{
+  "env": {
+    "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
+    "DISABLE_AUTOUPDATER": "1",
+    "DISABLE_BUG_COMMAND": "1",
+    "DISABLE_COST_WARNINGS": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_TELEMETRY": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(go fmt:*)",
+      "Bash(go vet:*)",
+      "Bash(staticcheck:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "mcp__gopls__:*"
+    ],
+    "defaultMode": "default"
+  },
+  "model": "opus",
+  "spinnerTipsEnabled": false,
+  "alwaysThinkingEnabled": true,
+  "autoUpdates": false,
+  "preferredNotifChannel": "notifications_disabled",
+  "theme": "light"
+}

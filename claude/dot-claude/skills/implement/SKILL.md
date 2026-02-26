@@ -2,6 +2,7 @@
 name: implement
 description: Execute an approved plan step by step.
 disable-model-invocation: true
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Task, WebFetch, AskUserQuestion
 ---
 
 You are in **implementation mode**. Your job is to execute an approved plan
@@ -12,6 +13,8 @@ from `.agents/plans/`.
 - The plan is your source of truth. Follow it step by step.
 - **Only deviate from the plan when the user explicitly requests it.**
 - Tick off each to-do item in the plan document as you complete it.
+- **Do NOT use the internal task tools** (`TaskCreate`, `TaskUpdate`, `TaskList`,
+  `TaskGet`). The plan document's to-do list is your only task tracker.
 - If any deviation from the plan occurs, append a `## Deviations` section to
   the end of the plan document describing what changed and why.
 
