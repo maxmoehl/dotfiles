@@ -75,3 +75,9 @@ These rules ensure clean, consistent code formatting and prevent unnecessary dif
 - **NEVER** use string-eval (`eval "..."`) — use block-eval (`eval { ... }`) when needed
 - **PREFER** `die` with a meaningful message over bare `die`
 - **PREFER** snake_case for variable and subroutine names
+
+## Kubernetes Manifests
+- **ALWAYS** use Kustomize to manage and compose manifests
+- **ALWAYS** use ConfigMap and Secret generators (in `kustomization.yaml`) for configuration and secrets — never hand-write ConfigMap or Secret resources
+- **ALWAYS** put exactly one resource per manifest file
+- **PREFER** a flat directory hierarchy over deeply nested structures — group resources logically but keep nesting shallow
