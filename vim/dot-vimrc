@@ -1,0 +1,107 @@
+" vim-plug bootstrap
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Plugins
+call plug#begin()
+
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'mattn/vim-lsp-settings'
+
+call plug#end()
+
+" General settings
+set nocompatible
+set number
+set scrolloff=10
+set mouse=
+set colorcolumn=80,100
+set signcolumn=yes
+set hidden
+set incsearch
+set hlsearch
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set backspace=indent,eol,start
+set wildmenu
+set wildmode=longest:full,full
+set laststatus=2
+set completeopt=menuone,noinsert,noselect,preview
+set termguicolors
+set background=light
+colorscheme one
+
+" Leader
+let mapleader = " "
+
+" vim-lsp settings
+let g:lsp_diagnostics_enabled = 1
+let g:lsp_diagnostics_signs_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_diagnostics_virtual_text_enabled = 0
+let g:lsp_hover_ui = 'float'
+
+" ltex-ls-plus for spell checking in text and markdown
+let s:dict_path = expand('~/.config/dictionary.txt')
+if !filereadable(s:dict_path)
+  let s:ltex_dict = []
+else
+  let s:ltex_dict = filter(readfile(s:dict_path), 'v:val !~# "^\\s*$"')
+endif
+au User lsp_setup call lsp#register_server({
+  \ 'name': 'ltex-ls-plus',
+  \ 'cmd': {server_info->['ltex-ls-plus']},
+  \ 'allowlist': ['text', 'markdown'],
+  \ 'initialization_options': {},
+  \ 'workspace_config': {
+  \   'ltex': {
+  \     'disabledRules': {
+  \       'en-US': ['PROFANITY', 'ARROWS', 'WHITESPACE_RULE'],
+  \     },
+  \     'dictionary': {
+  \       'en-US': s:ltex_dict,
+  \     },
+  \   },
+  \ },
+  \ })
+
+" Space-mode: pickers
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>/ :Rg<CR>
+nnoremap <Leader>g :GFiles?<CR>
+
+" Space-mode: LSP actions
+nnoremap <Leader>k :LspHover<CR>
+nnoremap <Leader>r :LspRename<CR>
+nnoremap <Leader>a :LspCodeAction<CR>
+nnoremap <Leader>s :LspDocumentSymbol<CR>
+nnoremap <Leader>S :LspWorkspaceSymbol<CR>
+nnoremap <Leader>d :LspDocumentDiagnostics<CR>
+
+" Goto-mode: LSP navigation
+nnoremap gd :LspDefinition<CR>
+nnoremap gr :LspReferences<CR>
+nnoremap gi :LspImplementation<CR>
+nnoremap gy :LspTypeDefinition<CR>
+
+" Diagnostic navigation
+nnoremap ]d :LspNextDiagnostic<CR>
+nnoremap [d :LspPreviousDiagnostic<CR>
+
+" Insert-mode: completion
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR>    pumvisible() ? asyncomplete#close_popup() : "\<CR>"
+imap <C-Space> <Plug>(asyncomplete_force_refresh)
+
+" Close preview window after completion
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
