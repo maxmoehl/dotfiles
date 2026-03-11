@@ -17,6 +17,12 @@ Plug 'mattn/vim-lsp-settings'
 
 call plug#end()
 
+" Persistent state
+silent call mkdir(expand('~/.local/state/vim/undo'), 'p')
+set undodir=~/.local/state/vim/undo
+set undofile
+set viminfofile=~/.local/state/vim/info
+
 " General settings
 set nocompatible
 set number
@@ -92,6 +98,8 @@ nnoremap gd :LspDefinition<CR>
 nnoremap gr :LspReferences<CR>
 nnoremap gi :LspImplementation<CR>
 nnoremap gy :LspTypeDefinition<CR>
+
+nnoremap U :redo<CR>
 
 " Diagnostic navigation
 nnoremap ]d :LspNextDiagnostic<CR>
