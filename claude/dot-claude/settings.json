@@ -23,5 +23,6 @@
   "alwaysThinkingEnabled": true,
   "autoUpdates": false,
   "preferredNotifChannel": "notifications_disabled",
-  "theme": "light"
+  "theme": "light",
+  "effortLevel": "high"
 }
