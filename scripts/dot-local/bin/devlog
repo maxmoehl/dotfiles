@@ -1,0 +1,245 @@
+#!/usr/bin/env perl
+
+# devlog - append-only dev log
+#
+# File format:
+#
+#   The log is a plain text file consisting of entries separated by delimiter
+#   lines. Each entry has the following structure:
+#
+#     == YYYY-MM-DD HH:MM ================================
+#
+#     #project-name
+#
+#     Free-form body text.
+#     Can span multiple lines.
+#
+#   Rules:
+#     - The delimiter line starts with "== ", followed by an ISO 8601 date and
+#       time (to the minute), followed by a space and padding "=" characters.
+#       The total line length is 50 characters.
+#     - After the delimiter there is one blank line.
+#     - The body is free-form text. It ends at the next delimiter or EOF.
+#     - Entries are separated by a single blank line.
+#     - The file ends with a trailing newline.
+#
+#   Sigils for inline references (usable anywhere in the body):
+#     @name       person
+#     #name       project / tag / topic
+#     ~name       organization / company
+#     + text      open item (todo)
+#     - text      completed item
+#
+#   Parsing:
+#     Entries can be extracted by splitting on lines matching:
+#       /^== \d{4}-\d{2}-\d{2} \d{2}:\d{2} =+$/
+#     Open/done items are lines matching /^\+ .+/ and /^- .+/.
+#     The last occurrence (by entry order) determines the state.
+#
+# Usage:
+#   devlog [command]
+#
+#   Commands:
+#     entry             Open $EDITOR to write a new entry, then append it (default).
+#     read              View the log in less, jumping to the end.
+#     edit              Open the full log in $EDITOR.
+#     items             List open items (lines marked with +, not yet completed with -).
+#     ask <question>    Ask a question about the log using the claude CLI.
+#
+#   Environment:
+#     DEVLOG_FILE   Path to the log file (default: ~/devlog.txt).
+
+use strict;
+use warnings;
+
+use File::Basename qw(basename);
+use File::Temp qw(tempfile);
+use IPC::Open2 qw(open2);
+use POSIX qw(strftime);
+
+my $PROGRAM = basename($0);
+
+my %commands = (
+    entry => \&cmd_entry,
+    read  => \&cmd_read,
+    edit  => \&cmd_edit,
+    items => \&cmd_items,
+    ask   => \&cmd_ask,
+);
+
+sub usage {
+    STDERR->print("usage: $PROGRAM [entry | read | edit | items | ask <question>]\n");
+    exit 1;
+}
+
+my $command = shift(@ARGV) // "entry";
+
+if ($command =~ /^-/) {
+    usage();
+}
+
+if (!exists($commands{$command})) {
+    STDERR->print("$PROGRAM: unknown command: $command\n");
+    usage();
+}
+
+if ($command ne "ask" && @ARGV > 0) {
+    usage();
+}
+
+my $logfile = $ENV{DEVLOG_FILE} // "$ENV{HOME}/devlog.txt";
+my $editor = $ENV{EDITOR} // $ENV{VISUAL} // "vi";
+
+my $OPEN_ITEMS_DELIMITER = "-- open items --";
+
+$commands{$command}->();
+
+sub collect_open_items {
+    if (!-f $logfile || !-s $logfile) {
+        return ();
+    }
+
+    open(my $fh, "<", $logfile)
+        or die("$PROGRAM: cannot read $logfile: $!\n");
+
+    my @open;
+    while (my $line = <$fh>) {
+        chomp($line);
+        if ($line =~ /^\+ (.+)$/) {
+            @open = grep { $_ ne $1 } @open;
+            push(@open, $1);
+        } elsif ($line =~ /^- (.+)$/) {
+            @open = grep { $_ ne $1 } @open;
+        }
+    }
+    close($fh);
+
+    return @open;
+}
+
+sub cmd_entry {
+    my ($tmp_fh, $tmp_file) = tempfile(
+        "devlog-XXXXXX",
+        TMPDIR => 1,
+        SUFFIX => ".txt",
+        UNLINK => 0,
+    );
+    close($tmp_fh);
+
+    my @open_items = collect_open_items();
+    if (@open_items) {
+        open(my $ofh, ">", $tmp_file)
+            or die("$PROGRAM: cannot write $tmp_file: $!\n");
+        $ofh->print("\n$OPEN_ITEMS_DELIMITER\n");
+        for my $item (@open_items) {
+            $ofh->print("+ $item\n");
+        }
+        close($ofh);
+    }
+
+    my $rc = system($editor, $tmp_file);
+    if ($rc != 0) {
+        unlink($tmp_file);
+        die("$PROGRAM: editor exited with status $rc\n");
+    }
+
+    open(my $fh, "<", $tmp_file)
+        or die("$PROGRAM: cannot read $tmp_file: $!\n");
+    my $content = do { local $/; <$fh> };
+    close($fh);
+    unlink($tmp_file);
+
+    $content =~ s/\n?\Q$OPEN_ITEMS_DELIMITER\E.*//s;
+    chomp($content);
+
+    if ($content =~ /^\s*$/) {
+        STDERR->print("$PROGRAM: empty entry, nothing appended\n");
+        exit 0;
+    }
+
+    my $timestamp = strftime("%Y-%m-%d %H:%M", localtime());
+    my $delimiter = sprintf("== %s %s", $timestamp, "=" x (80 - 4 - length($timestamp)));
+
+    my $needs_separator = -f $logfile && -s $logfile;
+
+    open(my $out, ">>", $logfile)
+        or die("$PROGRAM: cannot open $logfile: $!\n");
+
+    $out->print("\n") if $needs_separator;
+    $out->print("$delimiter\n");
+    $out->print("\n");
+    $out->print("$content\n");
+
+    close($out);
+
+    STDERR->print("$PROGRAM: entry appended to $logfile\n");
+}
+
+sub cmd_read {
+    exec("less", "+G", $logfile)
+        or die("$PROGRAM: exec less: $!\n");
+}
+
+sub cmd_edit {
+    exec($editor, $logfile)
+        or die("$PROGRAM: exec $editor: $!\n");
+}
+
+sub cmd_items {
+    my @open = collect_open_items();
+    if (!@open) {
+        STDERR->print("$PROGRAM: no open items\n");
+        return;
+    }
+    for my $item (@open) {
+        print("+ $item\n");
+    }
+}
+
+sub cmd_ask {
+    my $question = join(" ", @ARGV);
+    if ($question =~ /^\s*$/) {
+        STDERR->print("$PROGRAM: ask requires a question\n");
+        usage();
+    }
+
+    open(my $fh, "<", $logfile)
+        or die("$PROGRAM: cannot read $logfile: $!\n");
+    my $log_content = do { local $/; <$fh> };
+    close($fh);
+
+    my $system_prompt = <<'END';
+You are answering questions about the user's devlog — an append-only plain-text
+log. Entries are separated by delimiter lines matching:
+
+  == YYYY-MM-DD HH:MM ==...
+
+Inline sigils: @person, #project/tag, ~org. Items: + open, - done.
+
+The user will provide the full log followed by their question. Answer concisely.
+END
+    chomp($system_prompt);
+
+    my $pid = open2(my $claude_out, my $claude_in,
+        "claude", "-p",
+        "--system-prompt", $system_prompt,
+        "--no-session-persistence");
+
+    $claude_in->print($log_content);
+    $claude_in->print("\nQuestion: $question\n");
+    close($claude_in);
+
+    open(my $md, "|-", "md")
+        or die("$PROGRAM: cannot exec md: $!\n");
+    while (my $line = <$claude_out>) {
+        $md->print($line);
+    }
+    close($claude_out);
+    close($md);
+
+    waitpid($pid, 0);
+    my $status = $? >> 8;
+    if ($status != 0) {
+        exit $status;
+    }
+}
