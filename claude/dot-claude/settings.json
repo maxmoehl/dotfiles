@@ -6,7 +6,7 @@
     "DISABLE_COST_WARNINGS": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "DISABLE_TELEMETRY": "1",
-    "ENABLE_TOOL_SEARCH": false
+    "ENABLE_TOOL_SEARCH": "false"
   },
   "permissions": {
     "allow": [
@@ -19,11 +19,11 @@
     ],
     "defaultMode": "default"
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
   "autoUpdates": false,
   "preferredNotifChannel": "notifications_disabled",
-  "theme": "light",
-  "effortLevel": "high"
+  "theme": "light"
 }
