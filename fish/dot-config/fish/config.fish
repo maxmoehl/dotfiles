@@ -30,9 +30,6 @@ fish_add_path --global ~/.local/share/cargo/bin
 # This should _always_ be the first path to check.
 fish_add_path --global --move ~/.local/bin
 
-set -gx EDITOR vim
-abbr -a -- edit vim
-
 # Disable system-wide functions I don't like.
 functions -e \
     alias \
