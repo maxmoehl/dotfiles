@@ -1,0 +1,57 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    echo "Usage: vendor-stow <path-to-stow-source>" >&2
+    echo "" >&2
+    echo "Process GNU Stow .in templates and vendor the results into the" >&2
+    echo "dotfiles scripts module so that stowing 'scripts' installs stow." >&2
+    exit 1
+}
+
+if [ $# -ne 1 ]; then
+    usage
+fi
+
+stow_src="$1"
+
+if [ ! -d "$stow_src" ] || [ ! -f "$stow_src/configure.ac" ]; then
+    echo "Error: '$stow_src' is not a stow source directory (missing configure.ac)" >&2
+    exit 1
+fi
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+dotlocal="$(cd "$script_dir/.." && pwd)"
+repo_root="$(cd "$dotlocal/../.." && pwd)"
+
+version="$(sed -n 's/^AC_INIT(\[stow\], \[\([^]]*\)\].*/\1/p' "$stow_src/configure.ac")"
+if [ -z "$version" ]; then
+    echo "Error: could not extract version from configure.ac" >&2
+    exit 1
+fi
+
+mkdir -p "$dotlocal/bin" "$dotlocal/lib/perl5/Stow"
+
+# bin/stow
+sed \
+    -e 's|@PERL@|/usr/bin/env perl|g' \
+    -e "s|@VERSION@|$version|g" \
+    -e 's|@USE_LIB_PMDIR@|use FindBin; use lib "$FindBin::RealBin/../lib/perl5";|g' \
+    "$stow_src/bin/stow.in" > "$dotlocal/bin/stow"
+chmod +x "$dotlocal/bin/stow"
+
+# lib/Stow.pm (template + default-ignore-list appended after __DATA__)
+sed \
+    -e "s|@VERSION@|$version|g" \
+    "$stow_src/lib/Stow.pm.in" > "$dotlocal/lib/perl5/Stow.pm"
+cat "$stow_src/default-ignore-list" >> "$dotlocal/lib/perl5/Stow.pm"
+
+# lib/Stow/Util.pm
+sed \
+    -e "s|@VERSION@|$version|g" \
+    "$stow_src/lib/Stow/Util.pm.in" > "$dotlocal/lib/perl5/Stow/Util.pm"
+
+# License
+cp "$stow_src/COPYING" "$repo_root/LICENSES/GPL-3.0.txt"
+
+echo "Vendored GNU Stow $version from $stow_src"
