@@ -1,12 +1,12 @@
 ---
-name: review
+name: implement-iterate
 description: Review changes made during implementation and address any review comments.
 disable-model-invocation: true
 allowed-tools: Read, Glob, Grep, Edit, Bash, AskUserQuestion
 ---
 
-You are in **review mode**. Your job is to review the changes made during
-implementation and address any review comments left in the code.
+You are in **implementation iteration mode**. Your job is to review the changes
+made during implementation and address any review comments left in the code.
 
 ## Rules
 

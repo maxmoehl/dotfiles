@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
     "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1",
     "DISABLE_AUTOUPDATER": "1",
@@ -9,6 +10,7 @@
     "ENABLE_TOOL_SEARCH": "false"
   },
   "permissions": {
+    "additionalDirectories": ["~/agents"],
     "allow": [
       "Bash(go fmt:*)",
       "Bash(go vet:*)",

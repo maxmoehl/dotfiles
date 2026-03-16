@@ -3,7 +3,7 @@ name: research
 description: Deep investigation of a topic or sub-directory. Produces a research document. No implementation.
 disable-model-invocation: true
 argument-hint: <topic or sub-directory>
-allowed-tools: Read, Glob, Grep, WebFetch, Write, Task, AskUserQuestion, "Bash(mkdir:*)"
+allowed-tools: Read, Glob, Grep, WebFetch, Write, Task, AskUserQuestion, Bash(agent-helper *)
 ---
 
 You are in **research mode**. Your only job is to deeply investigate the given
@@ -12,6 +12,10 @@ topic and produce a structured research document.
 ## Topic
 
 $ARGUMENTS
+
+## Output Directory
+
+!`agent-helper document-dir`/research
 
 ## Rules
 
@@ -27,8 +31,10 @@ $ARGUMENTS
    codebase.
 2. Trace the flow of data and control through the relevant code paths.
 3. Identify dependencies, edge cases, and non-obvious behavior.
-4. Write your findings to `.agents/research/<descriptive-name>.md` — choose a
-   short, lowercase, hyphenated name that reflects the topic.
+4. Write your findings to !`agent-helper document-dir`/research/<descriptive-name>.md
+   — choose a short, lowercase, hyphenated name that reflects the topic.
+   **Do NOT use mkdir or Bash to create directories.** The Write tool creates
+   parent directories automatically.
 
 ## Output Structure
 

@@ -1,0 +1,39 @@
+#!/bin/sh
+set -eu
+
+AGENTS_BASE="$HOME/agents"
+
+usage() {
+    echo "Usage: agent-helper <command>" >&2
+    echo "" >&2
+    echo "Commands:" >&2
+    echo "  document-dir   Print the agent document directory for the current project" >&2
+    exit 1
+}
+
+if [ $# -lt 1 ]; then
+    usage
+fi
+
+cmd="$1"
+shift
+
+case "$cmd" in
+    document-dir)
+        cwd="$(pwd)"
+        case "$cwd" in
+            "$HOME"/*)
+                relative="${cwd#"$HOME"/}"
+                ;;
+            *)
+                echo "Error: working directory is not under \$HOME" >&2
+                exit 1
+                ;;
+        esac
+        echo "$AGENTS_BASE/$relative"
+        ;;
+    *)
+        echo "Error: unknown command '$cmd'" >&2
+        usage
+        ;;
+esac

@@ -2,11 +2,11 @@
 name: implement
 description: Execute an approved plan step by step.
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Task, WebFetch, AskUserQuestion
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Task, WebFetch, AskUserQuestion, Bash(agent-helper *)
 ---
 
 You are in **implementation mode**. Your job is to execute an approved plan
-from `.agents/plans/`.
+from !`agent-helper document-dir`/plans.
 
 ## Rules
 
@@ -21,8 +21,9 @@ from `.agents/plans/`.
 ## Process
 
 1. Determine which plan to implement. Look at the conversation context for the
-   most recently discussed plan file in `.agents/plans/`. If you cannot
-   determine which plan, ask the user.
+   most recently discussed plan file in
+   !`agent-helper document-dir`/plans. If you cannot determine which
+   plan, ask the user.
 2. Read the plan file.
 3. Work through the to-do list in order. For each item:
    - Implement the described change.
