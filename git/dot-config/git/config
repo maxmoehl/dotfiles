@@ -38,7 +38,7 @@
 	autocrlf = input
 	excludesFile = ~/.config/git/ignore
 	hooksPath = ~/.config/git/hooks
-	pager = delta
+	pager = unicode-reveal | delta
 [credential]
 	helper = cache
 [delta]
@@ -76,7 +76,7 @@
 [init]
 	defaultBranch = main
 [interactive]
-	diffFilter = delta --color-only
+	diffFilter = unicode-reveal | delta --color-only
 	singleKey = true
 [log]
 	abbrevCommit = true
@@ -85,7 +85,7 @@
 [merge]
 	conflictstyle = zdiff3
 [pager]
-	blame = delta
+	blame = unicode-reveal | delta
 [pull]
 	ff = only
 [push]

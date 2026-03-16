@@ -1,0 +1,16 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use utf8;
+
+$SIG{PIPE} = sub { exit(0) };
+
+binmode(STDIN, ':utf8');
+binmode(STDOUT, ':utf8');
+
+while (my $line = <STDIN>) {
+    # Reveal anything outside printable ASCII, common whitespace (tab, newline, CR),
+    # and ESC (used in ANSI terminal sequences)
+    $line =~ s/([^\x09\x0A\x0D\x1B\x20-\x7E])/sprintf("<U+%04X>", ord($1))/ge;
+    print($line);
+}
