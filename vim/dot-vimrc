@@ -24,27 +24,28 @@ set undofile
 set viminfofile=~/.local/state/vim/info
 
 " General settings
+set background=light
+set backspace=indent,eol,start
+set colorcolumn=80,100
+set completeopt=menuone,noinsert,noselect,preview
+set expandtab
+set hidden
+set hlsearch
+set incsearch
+set laststatus=2
+set mouse=
 set nocompatible
+set nowrap
 set number
 set scrolloff=10
-set mouse=
-set colorcolumn=80,100
-set signcolumn=yes
-set hidden
-set incsearch
-set hlsearch
-set tabstop=4
 set shiftwidth=4
-set expandtab
-set backspace=indent,eol,start
+set signcolumn=yes
+set tabstop=4
+set termguicolors
 set ttimeoutlen=10
-set nowrap
 set wildmenu
 set wildmode=longest:full,full
-set laststatus=2
-set completeopt=menuone,noinsert,noselect,preview
-set termguicolors
-set background=light
+
 colorscheme one
 
 " Leader
