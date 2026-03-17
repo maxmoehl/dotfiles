@@ -1,3 +1,5 @@
+set nocompatible
+
 " vim-plug bootstrap
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -25,7 +27,6 @@ set viminfofile=~/.local/state/vim/info
 
 " General settings
 set background=light
-set backspace=indent,eol,start
 set colorcolumn=80,100
 set completeopt=menuone,noinsert,noselect,preview
 set expandtab
@@ -34,7 +35,6 @@ set hlsearch
 set incsearch
 set laststatus=2
 set mouse=
-set nocompatible
 set nowrap
 set number
 set scrolloff=10
@@ -42,9 +42,12 @@ set shiftwidth=4
 set signcolumn=yes
 set tabstop=4
 set termguicolors
+set textwidth=80
 set ttimeoutlen=10
 set wildmenu
 set wildmode=longest:full,full
+
+autocmd FileType * setlocal formatoptions+=crqlj
 
 colorscheme one
 
