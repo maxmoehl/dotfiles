@@ -12,6 +12,7 @@
 	cl = clone --filter=blob:limit=100k
 	cp = cherry-pick
 	rb = rebase
+	sd = -c 'delta.side-by-side=true' diff
 	sm = submodule
 	advance = merge --ff-only
 	fix = commit --fixup
