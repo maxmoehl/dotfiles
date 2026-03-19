@@ -87,10 +87,12 @@ if ($command ne "ask" && @ARGV > 0) {
     usage();
 }
 
+my $logdir = $ENV{DEVLOG_DIR} // "$ENV{HOME}/.devlog";
 my $logfile = $ENV{DEVLOG_FILE} // "$ENV{HOME}/devlog.txt";
 my $editor = $ENV{EDITOR} // $ENV{VISUAL} // "vi";
+my $msgfile = "$logdir/message";
 
-my $OPEN_ITEMS_DELIMITER = "-- open items --";
+my $DELIMITER = "=" x 80;
 
 $commands{$command}->();
 
@@ -117,6 +119,21 @@ sub collect_open_items {
     return @open;
 }
 
+sub get_message {
+    if (!-f $msgfile || !-s $msgfile) {
+        return ();
+    }
+
+    open(my $fh, "<", $msgfile)
+        or die("$PROGRAM: cannot read $msgfile: $!\n");
+
+    my @msg = <$fh>;
+
+    chomp(@msg);
+
+    return @msg;
+}
+
 sub cmd_entry {
     my ($tmp_fh, $tmp_file) = tempfile(
         "devlog-XXXXXX",
@@ -126,16 +143,20 @@ sub cmd_entry {
     );
     close($tmp_fh);
 
-    my @open_items = collect_open_items();
-    if (@open_items) {
-        open(my $ofh, ">", $tmp_file)
-            or die("$PROGRAM: cannot write $tmp_file: $!\n");
-        $ofh->print("\n$OPEN_ITEMS_DELIMITER\n");
-        for my $item (@open_items) {
-            $ofh->print("+ $item\n");
-        }
-        close($ofh);
+    open(my $ofh, ">", $tmp_file)
+        or die("$PROGRAM: cannot write $tmp_file: $!\n");
+    $ofh->print("\n\n$DELIMITER\n");
+
+    my @msg = get_message();
+    for my $line (@msg) {
+        $ofh->print("$line\n");
     }
+
+    my @open_items = collect_open_items();
+    for my $item (@open_items) {
+        $ofh->print("+ $item\n");
+    }
+    close($ofh);
 
     my $rc = system($editor, $tmp_file);
     if ($rc != 0) {
@@ -149,7 +170,7 @@ sub cmd_entry {
     close($fh);
     unlink($tmp_file);
 
-    $content =~ s/\n?\Q$OPEN_ITEMS_DELIMITER\E.*//s;
+    $content =~ s/\n?\Q$DELIMITER\E.*//s;
     chomp($content);
 
     if ($content =~ /^\s*$/) {
@@ -165,7 +186,9 @@ sub cmd_entry {
     open(my $out, ">>", $logfile)
         or die("$PROGRAM: cannot open $logfile: $!\n");
 
-    $out->print("\n") if $needs_separator;
+    if ($needs_separator) {
+        $out->print("\n");
+    }
     $out->print("$delimiter\n");
     $out->print("\n");
     $out->print("$content\n");
