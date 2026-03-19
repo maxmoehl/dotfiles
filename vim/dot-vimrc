@@ -37,6 +37,7 @@ set laststatus=2
 set mouse=
 set nowrap
 set number
+set ruler
 set scrolloff=10
 set shiftwidth=4
 set signcolumn=yes
