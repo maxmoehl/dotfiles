@@ -17,6 +17,11 @@ $ARGUMENTS
 
 !`agent-helper document-dir`/research
 
+## Assets Directory
+
+!`agent-helper document-dir`/assets — if the user mentions additional assets
+(diagrams, screenshots, specs, etc.), look for them here.
+
 ## Rules
 
 - **NO implementation.** Do not write, edit, or suggest any code changes.

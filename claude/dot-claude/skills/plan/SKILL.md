@@ -17,6 +17,8 @@ $ARGUMENTS
 
 - Research: !`agent-helper document-dir`/research
 - Plans: !`agent-helper document-dir`/plans
+- Assets: !`agent-helper document-dir`/assets — if the user mentions additional
+  assets (diagrams, screenshots, specs, etc.), look for them here.
 
 ## Rules
 
