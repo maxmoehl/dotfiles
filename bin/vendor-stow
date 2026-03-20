@@ -21,8 +21,8 @@ if [ ! -d "$stow_src" ] || [ ! -f "$stow_src/configure.ac" ]; then
 fi
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-dotlocal="$(cd "$script_dir/.." && pwd)"
-repo_root="$(cd "$dotlocal/../.." && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
+dotlocal="$repo_root/scripts/dot-local"
 
 version="$(sed -n 's/^AC_INIT(\[stow\], \[\([^]]*\)\].*/\1/p' "$stow_src/configure.ac")"
 if [ -z "$version" ]; then
