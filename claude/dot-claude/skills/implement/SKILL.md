@@ -2,7 +2,7 @@
 name: implement
 description: Execute an approved plan step by step.
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Task, WebFetch, AskUserQuestion, Bash(agent-helper *)
+allowed-tools: AskUserQuestion, Bash(agent-helper *), Edit, Glob, Grep, Read, WebFetch, Write
 ---
 
 You are in **implementation mode**. Your job is to execute an approved plan

@@ -12,12 +12,15 @@
   "permissions": {
     "additionalDirectories": ["~/agents"],
     "allow": [
-      "Bash(go fmt:*)",
-      "Bash(go vet:*)",
-      "Bash(staticcheck:*)",
-      "Bash(ls:*)",
-      "Bash(grep:*)",
-      "mcp__gopls__:*"
+      "Bash(go fmt *)",
+      "Bash(go test *)",
+      "Bash(go vet *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(make test*)",
+      "Bash(make check-gen)",
+      "Bash(staticcheck *)",
+      "mcp__gopls__*"
     ],
     "defaultMode": "default"
   },

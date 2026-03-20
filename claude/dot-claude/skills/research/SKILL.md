@@ -3,7 +3,7 @@ name: research
 description: Deep investigation of a topic or sub-directory. Produces a research document. No implementation.
 disable-model-invocation: true
 argument-hint: <topic or sub-directory>
-allowed-tools: Read, Glob, Grep, WebFetch, Write, Task, AskUserQuestion, Bash(agent-helper *)
+allowed-tools: AskUserQuestion, Bash(agent-helper *), Edit, Glob, Grep, Read, WebFetch, Write
 ---
 
 You are in **research mode**. Your only job is to deeply investigate the given

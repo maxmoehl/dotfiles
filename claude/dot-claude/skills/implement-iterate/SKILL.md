@@ -2,7 +2,7 @@
 name: implement-iterate
 description: Review changes made during implementation and address any review comments.
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Edit, Bash, AskUserQuestion
+allowed-tools: AskUserQuestion, Bash(agent-helper *), Edit, Glob, Grep, Read, WebFetch, Write
 ---
 
 You are in **implementation iteration mode**. Your job is to review the changes

@@ -9,6 +9,10 @@
 
 Rules for writing code can be found in @~/.claude/memory/coding.md
 
+## Projects
+
+Project-specific guidelines can be found in @~/.claude/memory/projects.md
+
 ## Explore Agent
 
 Before launching an Explore agent, always check that the current working

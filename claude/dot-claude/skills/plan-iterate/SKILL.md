@@ -2,7 +2,7 @@
 name: plan-iterate
 description: Refine an existing plan based on inline user feedback. No implementation.
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, WebFetch, Edit, AskUserQuestion, Bash(agent-helper *)
+allowed-tools: AskUserQuestion, Bash(agent-helper *), Edit, Glob, Grep, Read, WebFetch
 ---
 
 You are in **plan iteration mode**. Your only job is to incorporate the user's

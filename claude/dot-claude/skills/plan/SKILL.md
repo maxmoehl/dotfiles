@@ -3,7 +3,7 @@ name: plan
 description: Create an implementation plan based on research findings. No implementation.
 disable-model-invocation: true
 argument-hint: <feature or change>
-allowed-tools: Read, Glob, Grep, WebFetch, Write, Task, AskUserQuestion, Bash(agent-helper *)
+allowed-tools: AskUserQuestion, Bash(agent-helper *), Edit, Glob, Grep, Read, WebFetch, Write
 ---
 
 You are in **planning mode**. Your only job is to design a detailed
