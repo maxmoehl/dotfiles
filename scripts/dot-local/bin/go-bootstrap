@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -e
 
 # Usage: go-bootstrap
 #
@@ -20,8 +22,10 @@ if test -z "${GOBIN}"; then
   exit 1
 fi
 
-tmp_dir="$(mktemp -d)"
+tmp_dir="${HOME}/tmp-go-bootstrap"
 go_version="$(curl -fsSL https://go.dev/VERSION?m=text | head -n1)"
+
+mkdir -p "${tmp_dir}"
 
 echo "Downloading ${go_version} to ${tmp_dir}..."
 curl -fLo "${tmp_dir}/go.tar.gz" "https://go.dev/dl/${go_version}.linux-amd64.tar.gz"
@@ -33,5 +37,7 @@ echo "Installing ${go_version}..."
 "${tmp_dir}/go/bin/go" install "golang.org/dl/${go_version}@latest"
 ln -s "${GOBIN}/${go_version}" "${GOBIN}/go"
 "${GOBIN}/go" download
+
+rm -rf "${tmp_dir}"
 
 echo "Done, you can now use 'go'"
