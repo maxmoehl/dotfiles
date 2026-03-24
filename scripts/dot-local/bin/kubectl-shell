@@ -1,6 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
 
-kubectl debug "node/$NODE_NAME" \
+exec kubectl debug \
     --stdin=true \
     --tty=true \
     --image=docker.io/library/alpine:latest \
