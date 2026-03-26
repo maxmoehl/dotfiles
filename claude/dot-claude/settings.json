@@ -24,6 +24,10 @@
     ],
     "defaultMode": "default"
   },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": ["Clauding"]
+  },
   "model": "opus[1m]",
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": true,
