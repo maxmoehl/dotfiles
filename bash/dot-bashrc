@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -t 0 ]; then
-    exec tmux new-session -A -s main
-fi
+source ~/.profile
 
 __prompt_command() {
     local last_status=$?
@@ -32,47 +30,3 @@ __prompt_command() {
 }
 
 PROMPT_COMMAND=__prompt_command
-
-export PATH="${HOME}/.local/bin:${PATH}"
-
-export XDG_CONFIG_HOME="${HOME}/.config"
-export XDG_CACHE_HOME="${HOME}/.cache"
-
-export GOCACHE="${HOME}/.cache/go"
-export GOMODCACHE="${HOME}/.cache/go-mod"
-export GOBIN="${HOME}/.local/bin"
-
-export EDITOR=vim
-
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-
-alias cpr='cp -r'
-alias d='docker'
-alias dc='docker compose'
-alias g='git'
-alias ga='git add'
-alias gam='git commit --amend --no-edit'
-alias gau='git add --update'
-alias gc='git commit'
-alias gco='git checkout'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gf='git fetch'
-alias ggraph='git log --all --decorate --oneline --graph'
-alias gl='git pull'
-alias gp='git push'
-alias gplease='git push --force-with-lease'
-alias gr='git rebase'
-alias gs='git status'
-alias gsu='git submodule update --recursive'
-alias gsw='git switch'
-alias k='kubectl'
-alias ka='kubectl get -A'
-alias kn='kubectl -n'
-alias l='ls -lh'
-alias ll='ls -lah'
-alias p='podman'
-alias pip='python3 -m pip'
-alias venv='python3 -m venv'
-alias venv='python3 -m venv venv && source ./venv/bin/activate'

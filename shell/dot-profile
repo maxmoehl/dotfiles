@@ -1,33 +1,95 @@
 #!/bin/sh
 
+# This file is consumed by all shells to set common variables and help me stay
+# sane while switching between shells. As such it has to be written in a syntax
+# that is understood by POSIX-like shells but also by non-POSIX shells like
+# fish. For fish in particular there are functions defined for export and alias
+# to bridge the gap. Regular if test ...; then also doesn't work which is why
+# this script uses && / || exclusively. In addition to that variables also can't
+# use brackets (e.g. ${VAR}), only $VAR works.
+
+# Tmux - to ensure all tmux scripts can find the binaries in ~/.local/bin we
+# put this path in now. Even though we prepend it once more at the end to
+# overrule any other paths which might have been added in the meantime.
+export PATH="$HOME/.local/bin:$PATH"
+command -v tmux >/dev/null && test -z "$TMUX" && test -t 0 && test -z "$SSH_CONNECTION" \
+    && exec tmux new-session -A -s main
+
+# At this point we could be running any shell. Launch sh to be a in known
+# enviornment to determine the shell and set the $SHELL variable accordingly.
+export SHELL="$(sh -c 'shell=$(ps -p $PPID -c -o comm=); command -v "${shell#-}"')"
+
 # System
-export PATH="${HOME}/.local/bin:${PATH}"
-export XDG_CONFIG_HOME="${HOME}/.config"
-export XDG_CACHE_HOME="${HOME}/.cache"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
 
 export LANG="en_US.UTF-8"
+export TIME_STYLE=long-iso
 
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-if command -v hx > /dev/null 2> /dev/null; then
-  export EDITOR=hx
-else
-  export EDITOR=vim
-fi
-
+export EDITOR=vim
 export PAGER=less
 
+# ls - regenrate with `dircolors ~/.config/dircolors`
+export LS_COLORS="rs=0:di=34:ln=35:bd=34;100:cd=34;100:or=31;40:mi=31;40:su=30;41:sg=30;41:tw=30;42:ow=34;42:st=30;44:ex=31:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:"
+
 # Go
-export GOCACHE="${HOME}/.cache/go"
-export GOMODCACHE="${HOME}/.cache/go-mod"
-export GOBIN="${HOME}/.local/bin"
+export GOBIN="$HOME/.local/bin"
+export GOCACHE="$HOME/.cache/go"
+export GOMODCACHE="$HOME/.cache/go-mod"
+
+# Bat
+export BAT_THEME="GitHub"
+
+# fzf
+export FZF_DEFAULT_COMMAND="rg --no-ignore --hidden --files --with-filename --follow --glob '!.git/' --glob '!*.swp'"
+export FZF_DEFAULT_OPTS="--ansi --reverse --preview 'bat --color=always {1}'"
+
+# Brew
+test -x /opt/homebrew/bin/brew \
+    && eval "$(/opt/homebrew/bin/brew shellenv "$(basename "$SHELL")")"
 
 # Rust
-if [[ -f ~/.local/share/cargo/env ]]; then
-  source ~/.local/share/cargo/env
-fi
+test -f ~/.local/share/cargo/env \
+    && export PATH="$HOME/.local/share/cargo/bin:$PATH"
 
-# tt
-export TT_HOME_DIR="${HOME}/.config/tt"
+# Atuin
+command -v atuin >/dev/null \
+    && eval "$(atuin init --disable-up-arrow -- "$(basename "$SHELL")")"
+
+# SSH
+test -d ~/.local/run/ssh \
+    || install -m 0700 -d ~/.local/run/ssh
+
+# ~/.local/bin always has priority
+export PATH="$HOME/.local/bin:$PATH"
+
+alias cpr='cp -r'
+alias d='docker'
+alias dc='docker compose'
+alias g='git'
+alias ga='git add'
+alias gam='git commit --amend --no-edit'
+alias gau='git add --update'
+alias gc='git commit'
+alias gco='git checkout'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gf='git fetch'
+alias ggraph='git log --all --decorate --oneline --graph'
+alias gl='git pull'
+alias gp='git push'
+alias gplease='git push --force-with-lease'
+alias gr='git rebase'
+alias gs='git status'
+alias gst='git stash'
+alias gsu='git submodule update --recursive'
+alias gsw='git switch'
+alias k='kubectl'
+alias ka='kubectl get -A'
+alias kn='kubectl -n'
+alias l='ls -lh'
+alias ll='ls -lah'
+alias p='podman'
+alias pip='python3 -m pip'
+alias venv='python3 -m venv'
+alias venvv='python3 -m venv venv && source ./venv/bin/activate'
