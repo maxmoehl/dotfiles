@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
+
+profile="$repo_root/shell/dot-profile"
+config="$repo_root/dircolors.conf"
+
+colors=$(dircolors -b "$config" | sed -n "s/^LS_COLORS='\\(.*\\)';$/\\1/p")
+
+if [ -z "$colors" ]; then
+    echo "Error: dircolors produced no output" >&2
+    exit 1
+fi
+
+sed -i "s|^export LS_COLORS=.*|export LS_COLORS=\"${colors}\"|" "$profile"

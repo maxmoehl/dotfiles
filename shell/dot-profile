@@ -29,7 +29,7 @@ export TIME_STYLE=long-iso
 export EDITOR=vim
 export PAGER=less
 
-# ls - regenrate with `dircolors ~/.config/dircolors`
+# ls - regenerate with `bin/update-dircolors`
 export LS_COLORS="rs=0:di=34:ln=35:bd=34;100:cd=34;100:or=31;40:mi=31;40:su=30;41:sg=30;41:tw=30;42:ow=34;42:st=30;44:ex=31:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:"
 
 # Go
