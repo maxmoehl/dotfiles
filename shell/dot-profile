@@ -93,3 +93,6 @@ alias p='podman'
 alias pip='python3 -m pip'
 alias venv='python3 -m venv'
 alias venvv='python3 -m venv venv && source ./venv/bin/activate'
+
+test -e ~/.profile.local \
+    && source ~/.profile.local
