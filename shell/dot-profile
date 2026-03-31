@@ -56,6 +56,9 @@ test -f ~/.local/share/cargo/env \
 command -v atuin >/dev/null \
     && eval "$(atuin init --disable-up-arrow -- "$(basename "$SHELL")")"
 
+# make
+export MAKEFLAGS="-j$(nproc)"
+
 # SSH
 test -d ~/.local/run/ssh \
     || install -m 0700 -d ~/.local/run/ssh
