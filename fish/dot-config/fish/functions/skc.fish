@@ -1,5 +1,5 @@
 function skc
-    set -g -x KUBECONFIG ~/.kube/$argv[1]
+    set -g -x KUBECONFIG ~/.kube/config-$argv[1].yml
 end
 
-complete -x -c skc -a '(find ~/.kube -maxdepth 1 -type f -printf "%f\n")'
+complete -x -c skc -a '(for f in ~/.kube/config-*.yml; string replace -r "^.*/config-(.*)\\.yml\$" \'$1\' $f; end)'
