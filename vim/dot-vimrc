@@ -107,6 +107,9 @@ nnoremap gr :LspReferences<CR>
 nnoremap gi :LspImplementation<CR>
 nnoremap gy :LspTypeDefinition<CR>
 
+nnoremap <expr> <C-d> !empty(popup_list()) ? lsp#scroll(+4) : "\<C-d>"
+nnoremap <expr> <C-u> !empty(popup_list()) ? lsp#scroll(-4) : "\<C-u>"
+
 nnoremap U :redo<CR>
 
 " Diagnostic navigation
