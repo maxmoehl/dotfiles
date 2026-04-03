@@ -48,7 +48,8 @@ set ttimeoutlen=10
 set wildmenu
 set wildmode=longest:full,full
 
-autocmd FileType * setlocal formatoptions+=crqlj
+autocmd FileType *    setlocal formatoptions+=crqlj
+autocmd FileType mail setlocal textwidth=70
 
 colorscheme one
 
