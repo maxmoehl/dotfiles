@@ -30,3 +30,16 @@ __prompt_command() {
 }
 
 PROMPT_COMMAND=__prompt_command
+
+# Set title to the working directory, and briefly to "wdir | command" while a
+# command is running.
+__wdir() {
+    case "$PWD" in
+        "$HOME") printf '~' ;;
+        *)       printf '%s' "${PWD##*/}" ;;
+    esac
+}
+__title() { printf '\033]2;%s\033\\' "$1"; }
+
+PROMPT_COMMAND="__title \"\$(__wdir)\"; $PROMPT_COMMAND; __title_armed=1"
+trap '[ "$__title_armed" = 1 ] && __title_armed=0 && __title "$(__wdir) │ ${BASH_COMMAND:0:50}"' DEBUG
