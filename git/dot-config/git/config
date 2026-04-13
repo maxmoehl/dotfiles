@@ -11,16 +11,17 @@
 	au = add --update
 	cl = clone --filter=blob:limit=100k
 	cp = cherry-pick
+	cs = commit --signoff
+	ff = merge --ff-only
 	rb = rebase
 	sd = -c 'delta.side-by-side=true' diff
 	sm = submodule
-	advance = merge --ff-only
 	fix = commit --fixup
+	who = shortlog -sn --no-merges
+	root = rev-parse --show-toplevel
 	graph = log --all --decorate --oneline --graph
-	last = log -1
 	please = push --force-with-lease
 	recommit = "!git commit -eF \"$(git rev-parse --git-dir)/COMMIT_EDITMSG\""
-	root = rev-parse --show-toplevel
 [blame]
 	date = iso
 [branch]
@@ -66,6 +67,8 @@
 	prune = true
 	pruneTags = false
 	recurseSubmodules = on-demand
+[format]
+    useAutoBase = true
 [gpg]
 	format = ssh
 [grep]
