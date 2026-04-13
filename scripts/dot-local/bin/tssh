@@ -1,0 +1,29 @@
+#!/bin/sh -e
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Maximilian Moehl
+
+# #======#
+# # tssh #
+# #======#
+#
+# Open a new Alacritty window and SSH into a host, attaching to (or creating)
+# a persistent tmux session named "main". The new window runs outside the local
+# tmux, so there is no nesting.
+#
+# Paths to alacritty, ssh and tmux are resolved at invocation time to ensure
+# local overrides (e.g. ~/.local/bin) take effect regardless of the environment
+# in the spawned window.
+#
+# # Usage #
+#
+#   tssh HOST
+
+if [ "$#" -ne 1 ]; then
+	echo "usage: tssh HOST" >&2
+	exit 1
+fi
+
+ALACRITTY="$(command -v alacritty)"
+SSH="$(command -v ssh)"
+
+exec "$ALACRITTY" msg create-window -e "$SSH" -t "$1" "tmux new-session -As main"
