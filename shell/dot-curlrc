@@ -1,1 +1,2 @@
---netrc
+netrc
+proto-default https
