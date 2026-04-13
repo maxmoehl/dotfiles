@@ -26,4 +26,4 @@ fi
 ALACRITTY="$(command -v alacritty)"
 SSH="$(command -v ssh)"
 
-exec "$ALACRITTY" msg create-window -e "$SSH" -t "$1" "tmux new-session -As main"
+exec "$ALACRITTY" msg create-window -T "$1" -e "$SSH" -t "$1" "tmux new-session -As main"
