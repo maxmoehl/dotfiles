@@ -73,7 +73,7 @@ endif
 au User lsp_setup call lsp#register_server({
   \ 'name': 'ltex-ls-plus',
   \ 'cmd': {server_info->['ltex-ls-plus']},
-  \ 'allowlist': ['text', 'markdown'],
+  \ 'allowlist': ['text', 'markdown', 'mail'],
   \ 'initialization_options': {},
   \ 'workspace_config': {
   \   'ltex': {
