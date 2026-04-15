@@ -47,6 +47,12 @@ set tabstop=4
 set termguicolors
 set textwidth=80
 set ttimeoutlen=10
+
+" Fix bracketed paste for tmux-256color (terminfo has wrong sequences)
+let &t_BE = "\e[?2004h"
+let &t_BD = "\e[?2004l"
+let &t_PS = "\e[200~"
+let &t_PE = "\e[201~"
 set wildmenu
 set wildmode=longest:full,full
 
