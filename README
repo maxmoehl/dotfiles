@@ -1,0 +1,23 @@
+dotfiles
+========
+
+Bootstrapping
+-------------
+
+In the `scripts/` module stow itself is included. You can call it from the
+repository root to install the script and any other module you want like this:
+
+	./scripts/dot-local/bin/stow -S scripts
+
+Claude Code
+-----------
+
+Setting MCP servers is not supported via the settings JSON file I have checked
+in and the `.claude.json` is not something you should not check in. The two MCP
+servers I regularly use are Chrome DevTools and Perplexity:
+
+	claude mcp add chrome-devtools --scope user -- npx -y chrome-devtools-mcp@latest
+	claude mcp add perplexity      --scope user -- npx -y @perplexity-ai/mcp-server@latest
+
+Setting up the environment variables to configure proxy endpoints and tokens is
+something which is not covered for obvious reasons.
