@@ -26,7 +26,13 @@
       "Bash(make test*)",
       "Bash(make check-gen)",
       "Bash(staticcheck *)",
-      "mcp__gopls__*"
+      "mcp__sonar-search__perplexity_ask"
+    ],
+    "deny": [
+      "WebSearch",
+      "mcp__sonar-search__perplexity_search",
+      "mcp__sonar-search__perplexity_reason",
+      "mcp__sonar-search__perplexity_research"
     ],
     "defaultMode": "default"
   },
