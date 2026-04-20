@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+alias ls='ls --color=auto'
+
 source ~/.profile
 
 __prompt_command() {
