@@ -81,10 +81,11 @@ endif
 au User lsp_setup call lsp#register_server({
   \ 'name': 'ltex-ls-plus',
   \ 'cmd': {server_info->['ltex-ls-plus']},
-  \ 'allowlist': ['text', 'markdown', 'mail'],
+  \ 'allowlist': ['text', 'markdown', 'mail', 'gitcommit'],
   \ 'initialization_options': {},
   \ 'workspace_config': {
   \   'ltex': {
+  \     'enabled': ['markdown', 'text', 'mail', 'gitcommit'],
   \     'disabledRules': {
   \       'en-US': ['PROFANITY', 'ARROWS', 'WHITESPACE_RULE'],
   \     },
