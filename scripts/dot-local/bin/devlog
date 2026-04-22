@@ -70,10 +70,11 @@ my %commands = (
     edit  => \&cmd_edit,
     items => \&cmd_items,
     ask   => \&cmd_ask,
+    tail  => \&cmd_tail,
 );
 
 sub usage {
-    STDERR->print("usage: devlog [entry | read | edit | items | ask <question>]\n");
+    STDERR->print("usage: devlog [entry | read | edit | items | tail | ask <question>]\n");
     exit 1;
 }
 
@@ -194,6 +195,11 @@ sub cmd_entry {
     close($out);
 
     STDERR->print("devlog: entry appended to $logfile\n");
+}
+
+sub cmd_tail {
+    exec("tail", "-n", "+1", "-F", $logfile)
+        or die("devlog: exec tail: $!\n");
 }
 
 sub cmd_read {
