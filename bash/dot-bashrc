@@ -15,7 +15,13 @@ __prompt_command() {
         PS1+="\[\e[31m\][lvl=$((SHLVL - 1))]\[\e[0m\] "
     fi
 
-    PS1+='\[\e[31m\]\h\[\e[0m\]:\e[38;5;18m\w\[\e[0m\]'
+    PS1+='\[\e[31m\]\h\[\e[0m\]:\[\e[38;5;18m\]\w\[\e[0m\]'
+
+    local branch
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+    if [[ -n $branch ]]; then
+        PS1+=" \[\e[32m\][${branch}]\[\e[0m\]"
+    fi
 
     if [[ $last_status -ne 0 ]]; then
         PS1+=" \[\e[31m\]${last_status}\[\e[0m\] "
