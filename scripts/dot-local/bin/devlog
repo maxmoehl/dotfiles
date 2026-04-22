@@ -57,7 +57,6 @@ use File::Temp qw(tempfile);
 use IPC::Open2 qw(open2);
 use POSIX qw(strftime);
 
-my $PROGRAM = basename($0);
 
 my %commands = (
     entry => \&cmd_entry,
@@ -68,7 +67,7 @@ my %commands = (
 );
 
 sub usage {
-    STDERR->print("usage: $PROGRAM [entry | read | edit | items | ask <question>]\n");
+    STDERR->print("usage: devlog [entry | read | edit | items | ask <question>]\n");
     exit 1;
 }
 
@@ -79,7 +78,7 @@ if ($command =~ /^-/) {
 }
 
 if (!exists($commands{$command})) {
-    STDERR->print("$PROGRAM: unknown command: $command\n");
+    STDERR->print("devlog: unknown command: $command\n");
     usage();
 }
 
@@ -102,7 +101,7 @@ sub collect_open_items {
     }
 
     open(my $fh, "<", $logfile)
-        or die("$PROGRAM: cannot read $logfile: $!\n");
+        or die("devlog: cannot read $logfile: $!\n");
 
     my @open;
     while (my $line = <$fh>) {
@@ -125,7 +124,7 @@ sub get_message {
     }
 
     open(my $fh, "<", $msgfile)
-        or die("$PROGRAM: cannot read $msgfile: $!\n");
+        or die("devlog: cannot read $msgfile: $!\n");
 
     my @msg = <$fh>;
 
@@ -144,7 +143,7 @@ sub cmd_entry {
     close($tmp_fh);
 
     open(my $ofh, ">", $tmp_file)
-        or die("$PROGRAM: cannot write $tmp_file: $!\n");
+        or die("devlog: cannot write $tmp_file: $!\n");
     $ofh->print("\n\n$DELIMITER\n");
 
     my @msg = get_message();
@@ -161,11 +160,11 @@ sub cmd_entry {
     my $rc = system($editor, $tmp_file);
     if ($rc != 0) {
         unlink($tmp_file);
-        die("$PROGRAM: editor exited with status $rc\n");
+        die("devlog: editor exited with status $rc\n");
     }
 
     open(my $fh, "<", $tmp_file)
-        or die("$PROGRAM: cannot read $tmp_file: $!\n");
+        or die("devlog: cannot read $tmp_file: $!\n");
     my $content = do { local $/; <$fh> };
     close($fh);
     unlink($tmp_file);
@@ -174,7 +173,7 @@ sub cmd_entry {
     chomp($content);
 
     if ($content =~ /^\s*$/) {
-        STDERR->print("$PROGRAM: empty entry, nothing appended\n");
+        STDERR->print("devlog: empty entry, nothing appended\n");
         exit 0;
     }
 
@@ -184,7 +183,7 @@ sub cmd_entry {
     my $needs_separator = -f $logfile && -s $logfile;
 
     open(my $out, ">>", $logfile)
-        or die("$PROGRAM: cannot open $logfile: $!\n");
+        or die("devlog: cannot open $logfile: $!\n");
 
     if ($needs_separator) {
         $out->print("\n");
@@ -195,23 +194,23 @@ sub cmd_entry {
 
     close($out);
 
-    STDERR->print("$PROGRAM: entry appended to $logfile\n");
+    STDERR->print("devlog: entry appended to $logfile\n");
 }
 
 sub cmd_read {
     exec("less", "+G", $logfile)
-        or die("$PROGRAM: exec less: $!\n");
+        or die("devlog: exec less: $!\n");
 }
 
 sub cmd_edit {
     exec($editor, $logfile)
-        or die("$PROGRAM: exec $editor: $!\n");
+        or die("devlog: exec $editor: $!\n");
 }
 
 sub cmd_items {
     my @open = collect_open_items();
     if (!@open) {
-        STDERR->print("$PROGRAM: no open items\n");
+        STDERR->print("devlog: no open items\n");
         return;
     }
     for my $item (@open) {
@@ -222,12 +221,12 @@ sub cmd_items {
 sub cmd_ask {
     my $question = join(" ", @ARGV);
     if ($question =~ /^\s*$/) {
-        STDERR->print("$PROGRAM: ask requires a question\n");
+        STDERR->print("devlog: ask requires a question\n");
         usage();
     }
 
     open(my $fh, "<", $logfile)
-        or die("$PROGRAM: cannot read $logfile: $!\n");
+        or die("devlog: cannot read $logfile: $!\n");
     my $log_content = do { local $/; <$fh> };
     close($fh);
 
@@ -253,7 +252,7 @@ END
     close($claude_in);
 
     open(my $md, "|-", "md")
-        or die("$PROGRAM: cannot exec md: $!\n");
+        or die("devlog: cannot exec md: $!\n");
     while (my $line = <$claude_out>) {
         $md->print($line);
     }
