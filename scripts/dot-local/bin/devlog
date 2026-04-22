@@ -57,6 +57,12 @@ use File::Temp qw(tempfile);
 use IPC::Open2 qw(open2);
 use POSIX qw(strftime);
 
+my $DELIMITER = "=" x 80;
+
+my $logdir = $ENV{DEVLOG_DIR} // "$ENV{HOME}/.devlog";
+my $logfile = $ENV{DEVLOG_FILE} // "$ENV{HOME}/devlog.txt";
+my $editor = $ENV{EDITOR} // $ENV{VISUAL} // "vi";
+my $msgfile = "$logdir/message";
 
 my %commands = (
     entry => \&cmd_entry,
@@ -85,13 +91,6 @@ if (!exists($commands{$command})) {
 if ($command ne "ask" && @ARGV > 0) {
     usage();
 }
-
-my $logdir = $ENV{DEVLOG_DIR} // "$ENV{HOME}/.devlog";
-my $logfile = $ENV{DEVLOG_FILE} // "$ENV{HOME}/devlog.txt";
-my $editor = $ENV{EDITOR} // $ENV{VISUAL} // "vi";
-my $msgfile = "$logdir/message";
-
-my $DELIMITER = "=" x 80;
 
 $commands{$command}->();
 
