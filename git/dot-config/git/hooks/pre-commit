@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+local_hook="$(git rev-parse --git-dir)/hooks/$(basename "$0")"
+if [ -x "$local_hook" ]; then
+    exec "$local_hook" "$@"
+fi
+
 # Exit immediately if we're in a rebase, merge, or cherry-pick
 git rev-parse --quiet --verify REBASE_HEAD      > /dev/null && exit 0 || true
 git rev-parse --quiet --verify MERGE_HEAD       > /dev/null && exit 0 || true

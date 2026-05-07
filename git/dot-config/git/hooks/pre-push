@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+local_hook="$(git rev-parse --git-dir)/hooks/$(basename "$0")"
+if [ -x "$local_hook" ]; then
+    exec "$local_hook" "$@"
+fi
