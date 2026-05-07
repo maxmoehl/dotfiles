@@ -12,7 +12,7 @@
     "DISABLE_TELEMETRY": "1",
     "ENABLE_TOOL_SEARCH": "false"
   },
-  "model": "opus[1m]",
+  "model": "claude-opus-4-6[1m]",
   "permissions": {
     "additionalDirectories": [
       "~/agents"
@@ -23,18 +23,27 @@
       "Bash(go vet *)",
       "Bash(grep *)",
       "Bash(ls *)",
-      "Bash(make test*)",
       "Bash(make check-gen)",
+      "Bash(make test*)",
       "Bash(staticcheck *)",
       "mcp__sonar-search__perplexity_ask"
     ],
+    "defaultMode": "default",
     "deny": [
       "WebSearch",
-      "mcp__sonar-search__perplexity_search",
+      "mcp__chrome-devtools__drag",
+      "mcp__chrome-devtools__emulate",
+      "mcp__chrome-devtools__lighthouse_audit",
+      "mcp__chrome-devtools__performance_analyze_insight",
+      "mcp__chrome-devtools__performance_start_trace",
+      "mcp__chrome-devtools__performance_stop_trace",
+      "mcp__chrome-devtools__resize_page",
+      "mcp__chrome-devtools__take_memory_snapshot",
+      "mcp__chrome-devtools__upload_file",
       "mcp__sonar-search__perplexity_reason",
-      "mcp__sonar-search__perplexity_research"
-    ],
-    "defaultMode": "default"
+      "mcp__sonar-search__perplexity_research",
+      "mcp__sonar-search__perplexity_search"
+    ]
   },
   "preferredNotifChannel": "notifications_disabled",
   "spinnerTipsEnabled": false,
