@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # Exit immediately if we're in a rebase, merge, or cherry-pick
 git rev-parse --quiet --verify REBASE_HEAD      > /dev/null && exit 0 || true
