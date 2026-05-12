@@ -17,6 +17,7 @@ Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'mattn/vim-lsp-settings'
 Plug 'tpope/vim-fugitive'
+Plug 'chrisbra/csv.vim'
 
 call plug#end()
 
@@ -61,6 +62,10 @@ autocmd FileType *    setlocal formatoptions+=crqlj
 autocmd FileType mail setlocal textwidth=70
 
 colorscheme one
+
+" csv.vim: auto-arrange on open, restore raw on save
+let g:csv_autocmd_arrange = 1
+let g:csv_autocmd_arrange_size = 1024*1024
 
 " Leader
 let mapleader = " "
