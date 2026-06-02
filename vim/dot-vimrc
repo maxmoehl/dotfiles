@@ -10,14 +10,15 @@ endif
 " Plugins
 call plug#begin()
 
+Plug 'chrisbra/csv.vim'
+Plug 'fatih/vim-go'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/vim-lsp'
 Plug 'tpope/vim-fugitive'
-Plug 'chrisbra/csv.vim'
 
 call plug#end()
 
@@ -62,6 +63,13 @@ autocmd FileType *    setlocal formatoptions+=crqlj
 autocmd FileType mail setlocal textwidth=70
 
 colorscheme one
+
+" vim-go: disable LSP features (vim-lsp handles gopls)
+let g:go_gopls_enabled = 0
+let g:go_def_mapping_enabled = 0
+let g:go_doc_keywordprg_enabled = 0
+let g:go_code_completion_enabled = 0
+let g:go_fmt_autosave = 0
 
 " csv.vim: auto-arrange on open, restore raw on save
 let g:csv_autocmd_arrange = 1
