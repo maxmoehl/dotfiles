@@ -76,6 +76,9 @@
 	patternType = extended
 [help]
 	autoCorrect = never
+[hook "dco"]
+	event = pre-push
+	command = ~/.local/bin/dco-check
 [http]
 	cookieFile = ~/.config/git/cookies
 [init]

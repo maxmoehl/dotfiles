@@ -1,0 +1,58 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+my @PREFIXES = qw(
+    github.com/ironcore-dev/
+);
+
+my $remote_url = $ARGV[1] // "";
+if ($remote_url eq "") {
+    STDERR->printf("dco-check: no remote_url given\n");
+    exit(1);
+}
+
+my $normalized = "";
+if ($remote_url =~ m{^https?://([^/]+)(/.+)}) {
+    $normalized = "$1$2";
+} elsif ($remote_url =~ m{^[^@]+@([^:]+):(.+)}) {
+    $normalized = "$1/$2";
+} else {
+    STDERR->printf("dco-check: could not process remote URL '$remote_url'\n");
+    exit(1);
+}
+
+my $prefix_matches = 0;
+for my $prefix (@PREFIXES) {
+    if (index($normalized, $prefix) == 0) {
+        $prefix_matches = 1;
+        last;
+    }
+}
+
+if (!$prefix_matches) {
+    exit(0);
+}
+
+while (my $line = <STDIN>) {
+    chomp($line);
+    my ($local_ref, $local_sha, $remote_ref, $remote_sha) = split(/\s+/, $line);
+
+    next if ($local_sha =~ /^0+$/);
+
+    my $range;
+    if ($remote_sha =~ /^0+$/) {
+        $range = $local_sha;
+    } else {
+        $range = "$remote_sha..$local_sha";
+    }
+
+    my @commits = split(/\n/, `git rev-list $range`);
+    for my $sha (@commits) {
+        my $message = `git log -1 --format=%B $sha`;
+        if ($message !~ /^Signed-off-by:\s+.+\s+<.+>/m) {
+            STDERR->print("dco-check: $sha: missing Signed-off-by trailer\n");
+            exit(1);
+        }
+    }
+}
