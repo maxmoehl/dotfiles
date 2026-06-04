@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PATH="${HOME}/.local/bin:${PATH}"
+
+fzf --tmux --preview '' --reverse --bind="enter:become(tmux send-keys {})" < ~/.config/tmux/oneliners.txt
