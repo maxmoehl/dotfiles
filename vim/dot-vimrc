@@ -29,6 +29,7 @@ set undofile
 set viminfofile=~/.local/state/vim/info
 
 " General settings
+set autoindent
 set background=light
 set colorcolumn=80,100
 set completeopt=menuone,noinsert,noselect,preview
@@ -59,7 +60,7 @@ let &t_PE = "\e[201~"
 set wildmenu
 set wildmode=longest:full,full
 
-autocmd FileType *    setlocal formatoptions+=crqlj
+autocmd FileType *    setlocal formatoptions+=crqlnj
 autocmd FileType mail setlocal textwidth=70
 
 colorscheme one
