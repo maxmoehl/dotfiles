@@ -28,6 +28,7 @@
       "Bash(make check-gen)",
       "Bash(make test*)",
       "Bash(staticcheck *)",
+      "Skill(ironcore)",
       "mcp__sonar-search__perplexity_ask"
     ],
     "defaultMode": "default",
