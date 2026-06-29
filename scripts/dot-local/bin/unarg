@@ -1,0 +1,40 @@
+#!/usr/bin/env perl
+
+# unarg - suppress excess arguments
+#
+# Made to suppress the arguments git passes to hooks. Instead of:
+#
+#   [hook "lint"]
+#     event = pre-push
+#     command = make lint
+#
+# and having to deal with make complaining about an unknown target origin, you
+# just do this:
+#
+#   [hook "lint"]
+#     event = pre-push
+#     command = unarg make lint --
+#
+# Make will be happy as it will be invoked as `make lint` and never know that
+# there were any push related arguments.
+
+use strict;
+use warnings;
+
+if (scalar(@ARGV) == 0) {
+    STDERR->printf("usage: unarg CMD ARGS... -- ARGS...\n");
+    exit(1);
+}
+
+my $cmd = $ARGV[0];
+
+my $end = 0;
+for my $i (1 .. $#ARGV) {
+    if ($ARGV[$i] eq '--') {
+        last;
+    }
+    $end = $i;
+}
+
+exec($cmd, @ARGV[1 .. $end]);
+die("exec failed: $!");
