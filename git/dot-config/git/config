@@ -79,6 +79,9 @@
 [hook "dco"]
 	event = pre-push
 	command = ~/.local/bin/dco-check
+[hook "reuse"]
+	event = pre-push
+	command = ~/.local/bin/reuse-hook
 [http]
 	cookieFile = ~/.config/git/cookies
 [init]

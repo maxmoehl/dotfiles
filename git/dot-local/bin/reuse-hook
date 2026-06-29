@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+if ! test -f REUSE.toml; then
+    exit 0
+fi
+
+reuse lint
