@@ -14,7 +14,7 @@
     "DISABLE_TELEMETRY": "1",
     "ENABLE_TOOL_SEARCH": "false"
   },
-  "model": "claude-opus-4-6",
+  "model": "claude-opus-4-8",
   "permissions": {
     "additionalDirectories": [
       "~/agents"
@@ -41,6 +41,7 @@
       "mcp__chrome-devtools__performance_start_trace",
       "mcp__chrome-devtools__performance_stop_trace",
       "mcp__chrome-devtools__resize_page",
+      "mcp__chrome-devtools__take_heapsnapshot",
       "mcp__chrome-devtools__take_memory_snapshot",
       "mcp__chrome-devtools__upload_file",
       "mcp__sonar-search__perplexity_reason",
@@ -56,5 +57,6 @@
       "Clauding"
     ]
   },
+  "terminalProgressBarEnabled": false,
   "theme": "light-ansi"
 }
