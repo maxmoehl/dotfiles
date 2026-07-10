@@ -38,6 +38,7 @@ set hidden
 set hlsearch
 set incsearch
 set laststatus=2
+set statusline=%f\ %{FugitiveStatusline()}\ %r%m%=%y\ %l:%c
 set list
 set listchars=tab:→\ ,trail:·,extends:›,precedes:‹,nbsp:␣
 set mouse=
