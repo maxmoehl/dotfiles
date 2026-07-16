@@ -40,7 +40,6 @@
 	attributesFile = ~/.config/git/attributes
 	autocrlf = input
 	excludesFile = ~/.config/git/ignore
-	hooksPath = ~/.config/git/hooks
 	pager = unicode-reveal | delta
 [credential]
 	helper = cache
