@@ -1,0 +1,23 @@
+#!/bin/sh -e
+
+log() {
+    echo "try-make: $*" >&2
+}
+
+if test -z "$1"; then
+    log "no or empty target given"
+    exit 1
+fi
+
+if ! make --dry-run "$1" >/dev/null 2>/dev/null; then
+    log "target $1 doesn't exist, skipping"
+    exit 0
+fi
+
+if make --quiet "$1"; then
+    log "$1 passed"
+    exit 0
+else
+    log "$1 failed"
+    exit 1
+fi

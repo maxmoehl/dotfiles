@@ -79,6 +79,9 @@
 [hook "dco"]
 	event = pre-push
 	command = ~/.local/bin/dco-check
+[hook "make-lint"]
+	event = pre-push
+	command = try-make lint
 [hook "reuse"]
 	event = pre-push
 	command = ~/.local/bin/reuse-hook
