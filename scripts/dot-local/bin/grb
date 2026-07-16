@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+if git remote show upstream >/dev/null 2>/dev/null; then
+    remote=upstream
+elif git remote show origin >/dev/null 2>/dev/null; then
+    remote=origin
+else
+    echo "grb: no remote found"
+    exit 1
+fi
+
+exec git rebase $(git merge-base HEAD $remote/HEAD) "$@"
