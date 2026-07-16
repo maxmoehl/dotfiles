@@ -1,7 +1,18 @@
 #!/bin/sh -e
 
+log() {
+    echo "reuse: $*" >&2
+}
+
 if ! test -f REUSE.toml; then
+    log "REUSE.toml doesn't exist, skipping"
     exit 0
 fi
 
-reuse lint
+if reuse lint --quiet; then
+    log "passed"
+    exit 0
+else
+    log "failed"
+    exit 1
+fi
