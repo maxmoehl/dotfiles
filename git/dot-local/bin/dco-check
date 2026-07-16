@@ -4,6 +4,7 @@ use warnings;
 
 my @PREFIXES = qw(
     github.com/ironcore-dev/
+    github.com/sap-contributions/ironcore
 );
 
 my $remote_name = $ARGV[0] // "";
