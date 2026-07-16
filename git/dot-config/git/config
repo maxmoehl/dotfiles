@@ -122,3 +122,5 @@
 	showStash = true
 [tag]
 	sort = -version:refname
+
+# vim: set filetype=gitconfig :
