@@ -34,7 +34,6 @@
 [commit]
 	gpgSign = true
 	status = true
-	template = ~/.config/git/message
 	verbose = true
 [core]
 	attributesFile = ~/.config/git/attributes
