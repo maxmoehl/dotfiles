@@ -1,0 +1,80 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+
+  "permission": {
+    "*": "ask",
+
+    "path": {
+      "*": "allow",
+
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+
+    "bash": {
+      "*": "ask",
+
+      "rm -rf *": "ask",
+      "sudo *": "ask",
+
+      "go build *": "allow",
+      "go test *": "allow",
+      "go vet *": "allow",
+      "go env *": "allow",
+      "go run *": "allow",
+      "go fmt *": "allow",
+      "go mod *": "allow",
+      "go version *": "allow",
+      "go list *": "allow",
+      "gofmt *": "allow",
+      "gofmt": "allow",
+
+      "git status": "allow",
+      "git diff *": "allow",
+      "git log *": "allow",
+      "git show *": "allow",
+      "git branch": "allow",
+      "git remote -v": "allow",
+      "git stash *": "allow",
+      "git rev-parse *": "allow",
+
+      "grep *": "allow",
+      "rg *": "allow",
+      "find *": "ask",
+      "fd *": "allow",
+      "ls *": "allow",
+      "ls": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "file *": "allow",
+      "stat *": "allow",
+      "du *": "allow",
+      "tree *": "allow",
+
+      "echo *": "allow",
+      "pwd": "allow",
+      "which *": "allow",
+      "env": "allow",
+      "printenv *": "allow",
+      "uname *": "allow",
+      "date": "allow",
+      "head *": "allow",
+      "sort *": "allow",
+      "sed *": "allow",
+
+      "colima *": "ask",
+      "docker *": "ask"
+    },
+
+    "external_directory": {
+      "*": "ask",
+
+      "~/go/pkg/mod/*": "allow",
+      "/tmp/*": "allow",
+      "~/.pi/agent/*": "ask"
+    }
+  }
+}

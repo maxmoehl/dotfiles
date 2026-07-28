@@ -1,0 +1,11 @@
+{
+  "lastChangelogVersion": "0.82.1",
+  "theme": "light",
+  "defaultProvider": "IronCore",
+  "defaultModel": "kimi-k3",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@gotgenes/pi-permission-system"
+  ],
+  "hideThinkingBlock": false
+}
