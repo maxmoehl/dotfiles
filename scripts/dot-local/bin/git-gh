@@ -36,13 +36,13 @@ __error() {
 # Usage: __remote [ DIR ]
 #
 # Get the remote to operate on, if DIR is given, do so from that directory
-# instead of $PWD. Order is: --remote flag, gh.defaultRemote config, 'origin'.
+# instead of $PWD. Order is: --remote flag, gh.remote config, 'origin'.
 __remote() {
   _remote_dir="${1:-${PWD}}"
   if [ -n "${Remote}" ]; then
     echo "${Remote}"
   else
-    git -C "${_remote_dir}" config get --default origin gh.defaultRemote
+    git -C "${_remote_dir}" config get --default origin gh.remote
   fi
 }
 
