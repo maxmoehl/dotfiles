@@ -53,6 +53,7 @@ set tabstop=4
 set termguicolors
 set textwidth=80
 set ttimeoutlen=10
+set directory=~/.vim/swap//
 
 " Fix bracketed paste for tmux-256color (terminfo has wrong sequences)
 let &t_BE = "\e[?2004h"
