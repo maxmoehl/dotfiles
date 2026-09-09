@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 alias ls='ls --color=auto'
+alias pi='sh <(podman run ghcr.io/maxmoehl/agents:pi)'
 
 source ~/.profile
 
