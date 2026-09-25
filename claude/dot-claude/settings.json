@@ -14,7 +14,7 @@
     "DISABLE_TELEMETRY": "1",
     "ENABLE_TOOL_SEARCH": "false"
   },
-  "model": "claude-opus-4-8",
+  "model": "claude-opus-4-6[1m]",
   "permissions": {
     "additionalDirectories": [
       "~/agents"
