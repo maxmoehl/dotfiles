@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+node="${1:?usage: dpcapture NODE ARGS...}"
+pod=""
+shift || true
+
+while read -r rpod rnode _; do
+    if test "$1" = "$rnode"; then
+        pod="$rpod"
+        break
+    fi
+done < <(kubectl --namespace dpservice-system \
+    get pods \
+    --no-headers \
+    --output custom-columns='NAME:.metadata.name,NODE:.spec.nodeName')
+
+if test -z "$pod"; then
+    echo "dpcapture: no dpservice pod found on node $1" >&2
+    exit 1
+fi
+
+kubectl --namespace dpservice-system \
+    exec "$pod" \
+    --container dpservice \
+    -- \
+    dpservice-dump "$@"
