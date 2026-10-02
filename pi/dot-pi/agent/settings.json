@@ -1,11 +1,24 @@
 {
-  "lastChangelogVersion": "0.82.1",
-  "theme": "light",
-  "defaultProvider": "IronCore",
-  "defaultModel": "kimi-k3",
+  "collapseChangelog": true,
+  "defaultThinkingLevel": "high",
+  "defaultModel": "kimi-k3-sovereign",
+  "defaultProvider": "gam",
+  "litellm": {
+    "mcp": {
+      "enabled": false
+    },
+    "providers": {
+      "gam": {
+        "baseUrl": "https://models.answering-machine.utility.gardener.cloud",
+        "apiKey": "$GAM_TOKEN"
+      }
+    },
+    "skills": {
+      "enabled": false
+    }
+  },
   "packages": [
-    "npm:pi-web-access",
-    "npm:@gotgenes/pi-permission-system"
+    "npm:pi-provider-litellm"
   ],
-  "hideThinkingBlock": false
+  "theme": "light"
 }
