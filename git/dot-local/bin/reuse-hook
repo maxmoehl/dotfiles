@@ -9,6 +9,8 @@ if ! test -f REUSE.toml; then
     exit 0
 fi
 
+log "running reuse lint"
+
 if reuse lint --quiet; then
     log "passed"
     exit 0
