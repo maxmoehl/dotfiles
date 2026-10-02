@@ -139,6 +139,9 @@ nnoremap <expr> <C-u> !empty(popup_list()) ? lsp#scroll(-4) : "\<C-u>"
 
 nnoremap U :redo<CR>
 
+" Close quickfix window after jumping to an entry
+autocmd FileType qf nnoremap <silent> <buffer> <CR> <CR>:cclose<CR>
+
 " Diagnostic navigation
 nnoremap ]d :LspNextDiagnostic<CR>
 nnoremap [d :LspPreviousDiagnostic<CR>
