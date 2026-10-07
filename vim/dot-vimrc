@@ -140,6 +140,22 @@ nnoremap <expr> <C-u> !empty(popup_list()) ? lsp#scroll(-4) : "\<C-u>"
 
 nnoremap U :redo<CR>
 
+" Resize splits directionally: move the border in the direction of the key,
+" like tmux resize-pane -L/-D/-U/-R
+function! s:ResizeSplit(dir) abort
+  if a:dir ==# 'h' || a:dir ==# 'l'
+    let l:step = (a:dir ==# 'l' ? 1 : -1) * (winnr('l') == winnr() ? -1 : 1) * 5
+    execute 'vertical resize' (l:step > 0 ? '+' : '') . l:step
+  else
+    let l:step = (a:dir ==# 'j' ? 1 : -1) * (winnr('j') == winnr() ? -1 : 1) * 5
+    execute 'resize' (l:step > 0 ? '+' : '') . l:step
+  endif
+endfunction
+nnoremap <silent> <C-h> :<C-U>call <SID>ResizeSplit('h')<CR>
+nnoremap <silent> <C-j> :<C-U>call <SID>ResizeSplit('j')<CR>
+nnoremap <silent> <C-k> :<C-U>call <SID>ResizeSplit('k')<CR>
+nnoremap <silent> <C-l> :<C-U>call <SID>ResizeSplit('l')<CR>
+
 " Close quickfix window after jumping to an entry
 autocmd FileType qf nnoremap <silent> <buffer> <CR> <CR>:cclose<CR>
 
