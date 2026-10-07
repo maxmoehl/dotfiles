@@ -20,6 +20,7 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-sleuth'
+Plug 'gh-tui-tools/gh-review.vim'
 
 call plug#end()
 
