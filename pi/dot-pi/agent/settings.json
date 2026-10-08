@@ -3,6 +3,7 @@
   "defaultThinkingLevel": "high",
   "defaultModel": "kimi-k3-sovereign",
   "defaultProvider": "gam",
+  "externalEditor": "vim",
   "litellm": {
     "mcp": {
       "enabled": false
@@ -20,5 +21,6 @@
   "packages": [
     "npm:pi-provider-litellm"
   ],
-  "theme": "light"
+  "theme": "light",
+  "tuiMode": "regular"
 }
