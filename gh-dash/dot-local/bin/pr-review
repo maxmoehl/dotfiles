@@ -1,0 +1,53 @@
+#!/bin/sh
+# Usage: pr-review DIR PR
+# Creates (or reuses) a git worktree for reviewing PR of DIR and opens a tmux
+# window in it.
+#
+# Worktrees live as hidden siblings of the repo:
+#   ~/src/org/repo/          -> ~/src/org/.repo.prs/<pr-number>/
+#
+# The worktree is a detached checkout of the PR head.
+set -eu
+
+if [ $# -ne 2 ]; then
+  echo "usage: pr-review DIR PR" >&2
+  exit 1
+fi
+
+if ! repo="$(git -C "$1" rev-parse --show-toplevel 2>/dev/null)"; then
+  echo "pr-review: $repo is not a git repository" >&2
+  exit 1
+fi
+
+pr="$2"
+parent="$(dirname "$repo")"
+name="$(basename "$repo")"
+worktree="$parent/.$name.prs/$pr"
+
+if git -C "$repo" remote get-url upstream 2>/dev/null | grep -qF 'github.com'; then
+  remote=upstream
+elif git -C "$repo" remote get-url origin 2>/dev/null | grep -qF 'github.com'; then
+  remote=origin
+else
+  echo "pr-review: no eligible remote found" >&2
+  exit 1
+fi
+
+if [ ! -d "$worktree" ]; then
+  mkdir -p "$parent/.$name.prs"
+  git -C "$repo" fetch "$remote" "pull/$pr/head"
+  git -C "$repo" worktree add --detach "$worktree" FETCH_HEAD
+elif [ -n "$(git -C "$worktree" status --porcelain)" ]; then
+  echo "pr-review: $worktree exists and is dirty, refusing to open" >&2
+  exit 1
+else
+  git -C "$worktree" fetch "$remote" "pull/$pr/head"
+  git -C "$worktree" checkout FETCH_HEAD
+fi
+
+left_top=$(tmux new-window -n "${name}#${pr}" -c "$worktree" -P -F '#{pane_id}')
+right=$(tmux split-window -h -t "$left_top" -c "$worktree" -l 100 -P -F '#{pane_id}')
+tmux split-window -v -t "$left_top" -c "$worktree" -l 20
+
+tmux send-keys   -t "$left_top" "vim -c 'GHReview $pr'" Enter
+tmux select-pane -t "$left_top"

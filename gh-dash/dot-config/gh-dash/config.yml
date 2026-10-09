@@ -2,7 +2,7 @@ prSections:
     - title: Review
       filters: is:open -is:draft review-requested:@me -org:cloudfoundry
     - title: Involved
-      filters: is:open involves:@me -author:@me
+      filters: is:open involves:@me -author:@me -org:cloudfoundry
     - title: Mine
       filters: is:open author:@me -is:draft
     - title: Drafts
@@ -92,9 +92,10 @@ keybindings:
     prs:
         - key: r
           name: Review PR
-          command: dev-win.sh {{.RepoPath}} {{.PrNumber}}
+          command: pr-review {{.RepoPath}} {{.PrNumber}}
 repoPaths:
     ironcore-dev/*: ~/src/ironcore/*
+    ironcore-dev/FeDHCP: ~/src/ironcore/fedhcp
 theme:
     colors:
         text:
