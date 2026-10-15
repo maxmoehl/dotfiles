@@ -17,20 +17,6 @@ issuesSections:
 notificationsSections:
     - title: All
       filters: ""
-    - title: Created
-      filters: reason:author
-    - title: Participating
-      filters: reason:participating
-    - title: Mentioned
-      filters: reason:mention
-    - title: Review Requested
-      filters: reason:review-requested
-    - title: Assigned
-      filters: reason:assign
-    - title: Subscribed
-      filters: reason:subscribed
-    - title: Team Mentioned
-      filters: reason:team-mention
 repo:
     branchesRefetchIntervalSeconds: 30
     prsRefetchIntervalSeconds: 60
@@ -93,6 +79,11 @@ keybindings:
         - key: r
           name: Review PR
           command: pr-review {{.RepoPath}} {{.PrNumber}}
+    notifications:
+        - key: M
+          builtin: markAsRead
+        - key: ctrl+m
+          builtin: markAllAsRead
 repoPaths:
     ironcore-dev/*: ~/src/ironcore/*
     ironcore-dev/FeDHCP: ~/src/ironcore/fedhcp
