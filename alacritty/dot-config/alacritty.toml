@@ -9,16 +9,20 @@ TERM = "alacritty-direct"
 size = 12.0
 
 [font.bold]
-family = "JetBrains Mono"
+family = "JetBrainsMono Nerd Font Mono"
+style = "Bold"
 
 [font.bold_italic]
-family = "JetBrains Mono"
+family = "JetBrainsMono Nerd Font Mono"
+style = "Bold Italic"
 
 [font.italic]
-family = "JetBrains Mono"
+family = "JetBrainsMono Nerd Font Mono"
+style = "Light Italic"
 
 [font.normal]
-family = "JetBrains Mono"
+family = "JetBrainsMono Nerd Font Mono"
+style = "Light"
 
 [general]
 live_config_reload = true
