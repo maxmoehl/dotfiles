@@ -79,6 +79,14 @@ keybindings:
         - key: r
           name: Review PR
           command: pr-review {{.RepoPath}} {{.PrNumber}}
+        - key: alt+m
+          builtin: merge
+        - key: m
+          name: Merge PR
+          command: >-
+              gh pr merge {{.PrNumber}} -R {{.RepoName}} --rebase --delete-branch ||
+              [ "$(gh pr view {{.PrNumber}} -R {{.RepoName}} --json state -q .state)" = MERGED ] ||
+              gh pr merge {{.PrNumber}} -R {{.RepoName}}
     notifications:
         - key: M
           builtin: markAsRead
