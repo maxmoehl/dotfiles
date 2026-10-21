@@ -10,6 +10,7 @@ endif
 " Plugins
 call plug#begin()
 
+Plug 'cormacrelf/vim-colors-github'
 Plug 'chrisbra/csv.vim'
 Plug 'fatih/vim-go'
 Plug 'junegunn/fzf'
@@ -67,7 +68,7 @@ set wildmode=longest:full,full
 autocmd FileType *    setlocal formatoptions+=crqlnj
 autocmd FileType mail setlocal textwidth=70
 
-colorscheme one
+colorscheme github
 
 " vim-go: disable LSP features (vim-lsp handles gopls)
 let g:go_gopls_enabled = 0
