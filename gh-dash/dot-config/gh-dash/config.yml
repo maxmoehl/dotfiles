@@ -2,11 +2,13 @@ prSections:
     - title: Review
       filters: is:open -is:draft review-requested:@me -org:cloudfoundry
     - title: Involved
-      filters: is:open involves:@me -author:@me -org:cloudfoundry
+      filters: is:open involves:@me -author:@me -review-requested:@me -org:cloudfoundry
     - title: Mine
       filters: is:open author:@me -is:draft
     - title: Drafts
       filters: is:open author:@me is:draft
+    - title: Recents
+      filters: is:closed involves:@me updated:>={{ nowModify "-1w" }}
 issuesSections:
     - title: My Issues
       filters: is:open author:@me
@@ -22,7 +24,7 @@ repo:
     prsRefetchIntervalSeconds: 60
 defaults:
     preview:
-        open: false
+        open: true
         width: 0.45
         height: 0.6
         position: auto
@@ -95,6 +97,7 @@ keybindings:
 repoPaths:
     ironcore-dev/*: ~/src/ironcore/*
     ironcore-dev/FeDHCP: ~/src/ironcore/fedhcp
+    ironcore-dev/ironcore-dev.github.io: ~/src/ironcore/docs
 theme:
     colors:
         text:
