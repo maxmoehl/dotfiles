@@ -10,18 +10,18 @@ endif
 " Plugins
 call plug#begin()
 
-Plug 'cormacrelf/vim-colors-github'
-Plug 'chrisbra/csv.vim'
-Plug 'fatih/vim-go'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sleuth'
-Plug 'gh-tui-tools/gh-review.vim'
+Plug 'https://github.com/cormacrelf/vim-colors-github.git'
+Plug 'https://github.com/chrisbra/csv.vim.git'
+Plug 'https://github.com/fatih/vim-go.git'
+Plug 'https://github.com/junegunn/fzf.git'
+Plug 'https://github.com/junegunn/fzf.vim.git'
+Plug 'https://github.com/prabirshrestha/asyncomplete.vim.git'
+Plug 'https://github.com/prabirshrestha/asyncomplete-lsp.vim.git'
+Plug 'https://github.com/prabirshrestha/vim-lsp.git'
+Plug 'https://github.com/mattn/vim-lsp-settings.git'
+Plug 'https://github.com/tpope/vim-fugitive.git'
+Plug 'https://github.com/tpope/vim-sleuth.git'
+Plug 'https://git.moehl.eu/gh-review.vim.git'
 
 call plug#end()
 
@@ -69,6 +69,9 @@ autocmd FileType *    setlocal formatoptions+=crqlnj
 autocmd FileType mail setlocal textwidth=70
 
 colorscheme github
+
+" vim-plug
+let g:plug_shallow = 0
 
 " vim-go: disable LSP features (vim-lsp handles gopls)
 let g:go_gopls_enabled = 0
