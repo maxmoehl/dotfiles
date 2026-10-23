@@ -1,7 +1,7 @@
 {
   "collapseChangelog": true,
   "defaultThinkingLevel": "high",
-  "defaultModel": "kimi-k3-sovereign",
+  "defaultModel": "claude-sonnet-5-5",
   "defaultProvider": "gam",
   "externalEditor": "vim",
   "litellm": {
