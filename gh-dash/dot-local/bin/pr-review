@@ -24,11 +24,13 @@ parent="$(dirname "$repo")"
 name="$(basename "$repo")"
 worktree="$parent/.$name.prs/$pr"
 
-if git -C "$repo" remote get-url upstream 2>/dev/null | grep -qF 'github.com'; then
-  remote=upstream
-elif git -C "$repo" remote get-url origin 2>/dev/null | grep -qF 'github.com'; then
-  remote=origin
-else
+for rc in upstream origin github; do
+  if git -C "$repo" remote get-url "$rc" 2>/dev/null | grep -qF 'github.com'; then
+    remote="$rc"
+    break
+  fi
+done
+if [ -z "$rc" ]; then
   echo "pr-review: no eligible remote found" >&2
   exit 1
 fi
