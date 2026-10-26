@@ -98,6 +98,7 @@ repoPaths:
     ironcore-dev/*: ~/src/ironcore/*
     ironcore-dev/FeDHCP: ~/src/ironcore/fedhcp
     ironcore-dev/ironcore-dev.github.io: ~/src/ironcore/docs
+    maxmoehl/ironcore-mkosi: ~/src/ironcore/mkosi
 theme:
     colors:
         text:
