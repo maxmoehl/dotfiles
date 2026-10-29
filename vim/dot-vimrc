@@ -10,7 +10,7 @@ endif
 " Plugins
 call plug#begin()
 
-Plug 'https://github.com/cormacrelf/vim-colors-github.git'
+Plug 'https://git.moehl.eu/vim/github-colors.git'
 Plug 'https://github.com/chrisbra/csv.vim.git'
 Plug 'https://github.com/fatih/vim-go.git'
 Plug 'https://github.com/junegunn/fzf.git'
