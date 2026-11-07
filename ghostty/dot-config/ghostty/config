@@ -1,0 +1,55 @@
+# FONT #
+
+font-family            = "JetBrainsMono Nerd Font Mono"
+font-style             = "Light"
+font-style-bold        = "Bold"
+font-style-italic      = "Light Italic"
+font-style-bold-italic = "Bold Italic"
+font-size              = 12
+
+# STYLE #
+
+theme = GitHub Light Default
+
+cursor-style       = block
+cursor-style-blink = false
+# Alacritty draws the cursor inverted by default.
+cursor-color       = cell-foreground
+cursor-text        = cell-background
+
+window-padding-balance = true
+macos-option-as-alt    = left
+
+# BEHAVIOUR #
+
+shell-integration = none
+
+copy-on-select = clipboard
+selection-word-chars = "\t,│`|:\"' ()[]{}<>"
+
+mouse-hide-while-typing = false
+
+# TMUX #
+
+# tmux owns the scrollback.
+scrollback-limit = 0
+# stops the wheel from being translated into arrow keys
+mouse-scroll-multiplier = 0.01
+
+window-show-tab-bar           = never
+window-save-state             = never
+confirm-close-surface         = false
+quit-after-last-window-closed = true
+
+# drop default bindings and only rebind as needed
+keybind = clear
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+keybind = super+plus=increase_font_size:1
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+zero=reset_font_size
+keybind = super+enter=toggle_fullscreen
+keybind = super+shift+comma=reload_config
+keybind = super+w=close_window
+keybind = super+q=quit
