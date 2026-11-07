@@ -27,7 +27,9 @@ call plug#end()
 
 " Persistent state
 silent call mkdir(expand('~/.local/state/vim/undo'), 'p')
+silent call mkdir(expand('~/.local/state/vim/swap'), 'p')
 set undodir=~/.local/state/vim/undo
+set directory=~/.local/state/vim/swap//
 set undofile
 set viminfofile=~/.local/state/vim/info
 
@@ -55,7 +57,6 @@ set tabstop=4
 set termguicolors
 set textwidth=80
 set ttimeoutlen=10
-set directory=~/.vim/swap//
 
 " Fix bracketed paste for tmux-256color (terminfo has wrong sequences)
 let &t_BE = "\e[?2004h"
