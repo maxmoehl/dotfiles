@@ -12,6 +12,10 @@
       "gam": {
         "baseUrl": "https://models.answering-machine.utility.gardener.cloud",
         "apiKey": "$GAM_TOKEN"
+      },
+      "ironcore": {
+        "baseUrl": "https://ai.ironcore.dev",
+        "apiKey": "$IRONCORE_TOKEN"
       }
     },
     "skills": {
