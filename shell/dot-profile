@@ -61,10 +61,6 @@ command -v atuin >/dev/null \
 # make
 export MAKEFLAGS="-j$(nproc)"
 
-# SSH
-test -d ~/.local/run/ssh \
-    || install -m 0700 -d ~/.local/run/ssh
-
 # gardenctl
 export GCTL_SHELL="$(basename "$SHELL")"
 test -z "$GCTL_SESSION_ID" \
@@ -72,6 +68,14 @@ test -z "$GCTL_SESSION_ID" \
 
 # ~/.local/bin always has priority
 export PATH="$HOME/.local/bin:$PATH"
+
+# SSH
+test -d ~/.local/run/ssh \
+    || install -d ~/.local/run/ssh
+
+export SSH_AUTH_SOCK="$HOME/.ssh/auth.sock"
+test -S "$SSH_AUTH_SOCK" \
+    || ssh-agent -a "$SSH_AUTH_SOCK"
 
 alias cpr='cp -r'
 alias d='docker'
