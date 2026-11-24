@@ -70,7 +70,6 @@ export GCTL_SHELL="$(basename "$SHELL")"
 test -z "$GCTL_SESSION_ID" \
   && export GCTL_SESSION_ID="$(uuidgen)"
 
-
 # ~/.local/bin always has priority
 export PATH="$HOME/.local/bin:$PATH"
 
