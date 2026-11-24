@@ -14,8 +14,9 @@
         "apiKey": "$GAM_TOKEN"
       },
       "ironcore": {
-        "baseUrl": "https://ai.ironcore.dev",
-        "apiKey": "$IRONCORE_TOKEN"
+        "baseUrl": "http://host.containers.internal:9001",
+        "apiKey": "ignored",
+        "allowInsecureHttp": true
       }
     },
     "skills": {
